@@ -1,9 +1,9 @@
 {
   "name": "coge",
   "version": "0.1.0",
-  "description": "Ace Code Generator",
+  "description": "A efficient code generator.",
   "license": "MIT",
-  "repository": "",
+  "repository": "https://gitr.net/ty/coge",
   "author": "",
   "keywords": [
     "aos",

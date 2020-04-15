@@ -1,3 +1,3 @@
 # coge
-> Ace Code Generator
+> A efficient code generator.
 
