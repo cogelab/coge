@@ -1,3 +1,3 @@
 # coge
-> A efficient code generator.
+> An efficient code generator.
 
