@@ -25,7 +25,7 @@ describe('params', () => {
   })
 
   it('env var overrides local templates but still take explicitly given templates', async () => {
-    process.env.HYGEN_TMPLS = fixture('templates-override/tmpls')
+    process.env.COGE_TMPLS = fixture('templates-override/tmpls')
     const args = await ParamsResolver.resolve(
       { templates: fixture('templates-override/_templates') },
       {generator: 'dont-take-this', action: 'foo', name: 'bar'},
