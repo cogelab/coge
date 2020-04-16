@@ -1,7 +1,6 @@
 import {ConfigResolver} from "../resolvers/config";
 import {fixture} from "./support";
 
-
 const templateParams = ({cwd, templates,}: {
   cwd: string
   templates: string

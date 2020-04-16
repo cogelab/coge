@@ -3,7 +3,7 @@ import {ParamsResolver} from '../resolvers/params';
 
 const fixture = dir => path.join(__dirname, 'fixtures/templates', dir)
 
-describe('params', () => {
+describe('resolver/params', () => {
   beforeEach(() => {
     process.env.COGE_TMPLS = undefined
   })
