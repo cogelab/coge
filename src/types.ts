@@ -80,7 +80,7 @@ export type Params = {
   folder?: string;
   pattern?: string;
   dry?: boolean;
-  name?: string;
+  // name?: string;
 }
 
 export type CmdOptions = {

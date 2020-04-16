@@ -33,6 +33,7 @@ async function listFiles(dir: string) {
 
 export const render = async (
   params: Partial<Params>,
+  locals?: {[name: string]: any},
   config?: RunnerConfig,
 ): Promise<RenderedAction[]> => {
   return params.folder ? listFiles(params.folder)
@@ -47,10 +48,9 @@ export const render = async (
       file,
       attributes: Object.entries(attributes).reduce((obj, [key, value]) => ({
         ...obj,
-        [key]: renderTemplate(value, params, config),
+        [key]: renderTemplate(value, locals, config),
       }), {}),
-      body: renderTemplate(body, params, config),
+      body: renderTemplate(body, locals, config),
     }))) : [];
 }
-
 

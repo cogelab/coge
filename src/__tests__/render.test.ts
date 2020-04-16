@@ -10,7 +10,7 @@ describe('render ng', () => {
     const expectedFile = /empty/
     const expectedBody = ''
     // act
-    const actual = await render({ folder: fixture('app/action-empty') })
+    const actual = await render({folder: fixture('app/action-empty')})
     const actualFile = actual[0].file
     const actualBody = actual[0].body
     // assert
@@ -24,9 +24,10 @@ describe('render ng', () => {
     const expectedFilePath = 'foo/someone/bar'
     // act
     const actual = await render({
+      folder: fixture('app/action-full'),
+    }, {
       bill: 17,
       name: 'someone',
-      folder: fixture('app/action-full'),
     })
     // get template that was loaded
     const actualFile = actual[0].file
@@ -51,8 +52,9 @@ describe('render ng', () => {
     const expectedBody = /someone and Someone/
     // act
     const response = await render({
-      name: 'someone',
       folder: fixture('app/action-capitalized'),
+    }, {
+      name: 'someone',
     })
     const actualFile = response[0].file
     const actualBody = response[0].body
@@ -83,8 +85,9 @@ describe('render ng', () => {
     const expectedFileTwo = /full/
     // act
     const response = await render({
-      bill: 17,
       folder: fixture('app/action-multifiles'),
+    }, {
+      bill: 17
     })
     const actualFileCount = response.length
     const actualFileOne = response[0].file
@@ -102,8 +105,9 @@ describe('render ng', () => {
     const expectedFileTwo = /full/
     // act
     const response = await render({
-      bill: 17,
       folder: fixture('app/action-multifiles-nest'),
+    }, {
+      bill: 17
     })
     const actualFileCount = response.length
     const actualFileOne = response[0].file
@@ -120,9 +124,10 @@ describe('render ng', () => {
     const expectedFile = /capitalized/
     // act
     const response = await render({
-      bill: 17,
       folder: fixture('app/action-multifiles'),
       pattern: 'capitalized',
+    }, {
+      bill: 17
     })
     const actualFileCount = response.length
     const actualFile = response[0].file
@@ -134,8 +139,9 @@ describe('render ng', () => {
   // FIXME this test doesn't seem to be actually testing injection unless i'm missing something
   it('inject', async () => {
     const res = await render({
-      name: 'devise',
       folder: fixture('app/action-inject'),
+    }, {
+      name: 'devise',
     })
     expect(res[0].file).toMatch(/inject/)
     res[0].file = 'inject.ejs.t'
@@ -148,8 +154,9 @@ describe('render ng', () => {
     const expectedBody = /foo_bar/
     // act
     const response = await render({
-      name: 'FooBar',
       folder: fixture('app/action-change-case'),
+    }, {
+      name: 'FooBar',
     })
     const actualFile = response[0].file
     const actualBody = response[0].body

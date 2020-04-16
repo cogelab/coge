@@ -10,11 +10,10 @@ describe('params', () => {
   it('dont take template folder in template', async () => {
     const args = await ParamsResolver.resolve(
       { templates: fixture('template-folder-in-templates/_templates') },
-      {generator: 'dont-take-this', action: 'foo', name: 'bar'},
+      {generator: 'dont-take-this', action: 'foo'},
     )
     expect(args).toEqual({
       action: 'foo',
-      name: 'bar',
       pattern: undefined,
       folder: `${fixture(
         'template-folder-in-templates/_templates',
@@ -28,11 +27,10 @@ describe('params', () => {
     process.env.COGE_TMPLS = fixture('templates-override/tmpls')
     const args = await ParamsResolver.resolve(
       { templates: fixture('templates-override/_templates') },
-      {generator: 'dont-take-this', action: 'foo', name: 'bar'},
+      {generator: 'dont-take-this', action: 'foo'},
     )
     expect(args).toEqual({
       action: 'foo',
-      name: 'bar',
       pattern: undefined,
       generator: 'dont-take-this',
       folder: `${fixture(

@@ -7,6 +7,8 @@ import {ParamsResolver} from "./resolvers/params";
 import {render} from "./render";
 import {resolveOps} from "./ops";
 import {undasherize} from "./utils";
+import {LocalsResolver} from "./resolvers/locals";
+import {AttrsResolver} from "./resolvers/attrs";
 
 export async function generate(opts: any, conf: RunnerConfig, logger: Logger) {
   const resolvedConfig = await ConfigResolver.resolve(conf);
@@ -22,14 +24,18 @@ export async function generate(opts: any, conf: RunnerConfig, logger: Logger) {
       logger.log('-------------------')
     }
     printHelp(templates, logger);
-    return { success: false, actions: [], time: 0 };
+    return {success: false, actions: [], time: 0};
   }
 }
 
 async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
   const {cwd, templates} = conf;
-  const {attr} = opts;
-  const params = Object.assign(await ParamsResolver.resolve(conf, opts, resolveAttrs(attr || [])), {cwd});
+  const {attr, name} = opts;
+
+  const params = ParamsResolver.resolve(conf, opts);
+  const attrs = Object.assign(AttrsResolver.resolve(attr), {cwd}, name && {name});
+
+  const locals = await LocalsResolver.resolve(conf, params, attrs);
   const {generator, folder} = params;
 
   opts.dry && logger.log('(dry mode)')
@@ -50,7 +56,7 @@ async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
 
   // lazy loading these dependencies gives a better feel once
   // a user is exploring coge (not specifying what to execute)
-  const renderedActions = await render(params, conf);
+  const renderedActions = await render(params, locals, conf);
   const messages: string[] = []
   const answer: Op[] = []
   for (const action of renderedActions) {
@@ -68,12 +74,3 @@ async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
   }
   return answer;
 }
-
-function resolveAttrs(attrs: string[]): { [name: string]: any } {
-  return attrs.reduce((answer, s) => {
-    const parts = s.trim().split(/[=]/);
-    answer[parts[0]] = answer[undasherize(parts[0], true)] = parts[1] || true;
-    return answer;
-  }, {});
-}
-
