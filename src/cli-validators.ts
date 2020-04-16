@@ -1,3 +1,3 @@
-export function Repest(value, previous) {
+export function CliOptionsRepeat(value, previous) {
   return (previous || []).concat([value]);
 }

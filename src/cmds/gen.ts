@@ -1,6 +1,6 @@
 import {CliCmdDefinition, CmdOptions} from "../types";
 import {generate, GenerateOptions} from "../generate";
-import {Repest} from "../cli-validators";
+import {CliOptionsRepeat} from "../cli-validators";
 
 export const gen: CliCmdDefinition = {
   name: 'gen',
@@ -13,14 +13,20 @@ export const gen: CliCmdDefinition = {
     description: 'perform a dry run. files will be generated but not saved.',
   }, {
     flags: '-f, --force',
-    description: 'force to perform the run without interactive confirming',
+    description: 'overwrite files that already exist without confirmation',
   }, {
     flags: '-n, --name <name>',
     description: 'simplified definition of `name` attribute ',
   }, {
     flags: '-A <attr>=<value>',
     description: 'set <attr> to <value>',
-    validator: Repest
+    validator: CliOptionsRepeat
+  }, {
+    flags: '--af',
+    description: 'attribute file to load'
+  }, {
+    flags: '--ap',
+    description: 'attribute path to merge from attribute file'
   }]
 }
 
