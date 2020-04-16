@@ -10,7 +10,7 @@ export class ParamsResolver {
   ): Promise<Params> {
     const {generator, action, name} = opts;
     if (!generator || !action) {
-      return { generator, action, templates }
+      return {generator, action, templates}
     }
 
     const [actionName, pattern] = action.split(':');

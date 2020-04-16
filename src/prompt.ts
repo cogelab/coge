@@ -2,41 +2,50 @@ import path = require('path');
 import fs = require('fs');
 import {Prompter} from './types'
 
-interface Interactor {
+interface InteractionParams {
+  params(opts: { args }): Promise<any>;
 }
 
-const InteractorFiles = ['prompt.js', 'index.js'];
+interface InteractionPrompt {
+  prompt(opts: { prompter, inquirer, args }): Promise<any>;
+}
 
+type InteractionOptions = { type: string, name: string, message: string }[];
+
+type Interaction = InteractionParams | InteractionPrompt | InteractionOptions;
+
+const InteractionFiles = ['prompt.js', 'index.js'];
 export async function prompt<Q, T>(
   createPrompter: () => Prompter<Q, T>,
   folder: string,
   opts: Record<string, any>,
 ): Promise<T | object> {
-  const file = InteractorFiles
+  const file = InteractionFiles
     .map(f => path.resolve(path.join(folder, f)))
-    .find(f => fs.existsSync(f))
+    .find(f => fs.existsSync(f));
 
-  if (!file) {
+  const interaction: any = file && await require(file);
+
+  if (!interaction || (!interaction.params && !interaction.prompt && !interaction.filter)) {
     return Promise.resolve({})
   }
 
   // short circuit without prompter
   // $FlowFixMe
-  const interactor: any = require(file)
-  if (typeof interactor.params === 'function') {
-    return interactor.params({args: opts})
+  if (interaction.params) {
+    return interaction.params({args: opts});
   }
 
   // lazy loads prompter
   // everything below requires it
   const prompter = createPrompter()
-  if (interactor.prompt) {
-    return interactor.prompt({prompter, inquirer: prompter, args: opts})
+  if (interaction.prompt) {
+    return interaction.prompt({prompter, inquirer: prompter, args: opts});
   }
 
   return prompter.prompt(
     // prompt _only_ for things we've not seen on the CLI
-    interactor.filter(p =>
+    interaction.filter(p =>
       opts[p.name] == null ||
       opts[p.name].length === 0,
     ),

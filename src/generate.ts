@@ -30,9 +30,9 @@ async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
   const {cwd, templates} = conf;
   const {attr} = opts;
   const params = Object.assign(await ParamsResolver.resolve(conf, opts, resolveAttrs(attr || [])), {cwd});
-  const {generator, pattern, folder} = params;
+  const {generator, folder} = params;
 
-  logger.log(opts.dry ? '(dry mode)' : '')
+  opts.dry && logger.log('(dry mode)')
   if (!generator) {
     throw new Error('please specify a generator.')
   }
@@ -43,8 +43,8 @@ async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
     throw new Error(`I can't find generator '${generator}'.
 
       You can try:
-      1. 'coge init' to initialize your project, and
-      2. 'coge generator --name ${generator}' to build the generator you wanted.
+      1. 'coge generator init' to initialize your project, and
+      2. 'coge generator new ${generator}' to build the generator you wanted.
       `)
   }
 

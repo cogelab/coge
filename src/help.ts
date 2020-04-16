@@ -16,24 +16,24 @@ const availableGroups = (templates: string) => {
 }
 
 const printHelp = (templates: string, logger: Logger) => {
-  logger.log(`coge v${pkg.version}`)
-  logger.log('\nAvailable groups:')
+  logger.log(`${pkg.name} v${pkg.version}`)
+  logger.log('\nAvailable actions:')
   if (!templates) {
-    logger.log(`No generators or groups found.
+    logger.log(`No generators or actions found.
 
       This means I didn't find a _templates folder right here,
       or anywhere up the folder tree starting here.
 
       Here's how to start using coge:
 
-      $ coge init
-      $ coge -i new my-generator
+      $ coge generator init
+      $ coge generator new my-generator
 
       (edit your generator in _templates/my-generator)
 
       $ coge my-generator
 
-      See http://coge.io for more.
+      See https://github/taoyuan/coge for more.
 
       `)
     return

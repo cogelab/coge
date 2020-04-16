@@ -76,12 +76,11 @@ export interface RunnerConfig {
 export type Params = {
   templates: string;
   generator: string;
-  folder?: string;
   action: string;
+  folder?: string;
   pattern?: string;
-  name?: string;
   dry?: boolean;
-  [name: string]: any;
+  name?: string;
 }
 
 export type CmdOptions = {
