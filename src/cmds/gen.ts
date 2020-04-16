@@ -1,5 +1,5 @@
 import {CliCmdDefinition, CmdOptions} from "../types";
-import {generate} from "../generate";
+import {generate, GenerateOptions} from "../generate";
 import {Repest} from "../cli-validators";
 
 export const gen: CliCmdDefinition = {
@@ -25,6 +25,6 @@ export const gen: CliCmdDefinition = {
 }
 
 async function action({conf, opts, logger}: CmdOptions) {
-  return await generate(opts, conf, logger);
+  return await generate(<GenerateOptions>opts, conf, logger);
 }
 
