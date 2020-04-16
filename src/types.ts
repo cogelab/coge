@@ -7,15 +7,26 @@ export interface Logger {
   colorful: (msg: string) => void
 }
 
-type CliCmdValidatorFn = <T>(value: string, previous: T) => T;
-type CliCmdValidator = RegExp | CliCmdValidatorFn;
+type CliCmdValidatorFn = (str: string) => any;
+type CliCmdValidatorArg = string[] | string | RegExp | CliCmdValidatorFn | Number;
 
 type CliCmdActionCallback = (opts: CmdOptions) => Promise<any>;
+
+type CliCmdOptionType = 'int' | 'float' | 'bool' | 'list' | 'repeatable';
+
+export interface CliCmdArgument {
+  flags: string;
+  description: string;
+  type?: CliCmdOptionType;
+  validator?: CliCmdValidatorArg;
+  defaultValue?: any;
+}
 
 export interface CliCmdOption {
   flags: string;
   description: string;
-  validator?: CliCmdValidator;
+  type?: CliCmdOptionType;
+  validator?: CliCmdValidatorArg;
   defaultValue?: any;
   required?: boolean;
 }
@@ -26,7 +37,7 @@ export interface CliCmdDefinition {
   default?: boolean;
   alias?: string;
   help?: string;
-  arguments?: string;
+  arguments?: CliCmdArgument[];
   options?: CliCmdOption[];
   action: CliCmdActionCallback;
 }

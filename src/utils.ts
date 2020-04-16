@@ -75,3 +75,16 @@ function isObject(obj) {
 export function shell(command, options) {
   return require('execa')(command, [], {shell: true, ...options});
 }
+
+export function assign(target, ...sources) {
+  for (const source of sources) {
+    if (!sources) continue;
+    for (const key of Object.keys(source)) {
+      const val = source[key];
+      if (val !== undefined) {
+        target[key] = val;
+      }
+    }
+  }
+  return target;
+}

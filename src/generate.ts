@@ -15,7 +15,7 @@ export interface GenerateOptions {
   force?: boolean;
   dry?: boolean;
   name?: string;
-  A?: string[];
+  attr?: string[];
 }
 
 export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
@@ -38,10 +38,10 @@ export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger
 
 async function doGenerate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
   const {cwd, templates} = conf;
-  const {A, name} = opts;
+  const {attr, name} = opts;
 
   const params = ParamsResolver.resolve(conf, opts);
-  const attrs = Object.assign(AttrsResolver.resolve(A), {cwd}, name && {name});
+  const attrs = Object.assign(AttrsResolver.resolve(attr), {cwd}, name && {name});
   const locals = await LocalsResolver.resolve(conf, params, attrs);
   const {generator, folder} = params;
 

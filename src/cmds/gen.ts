@@ -7,26 +7,29 @@ export const gen: CliCmdDefinition = {
   description: 'Generate file according to templates',
   default: true,
   action,
-  arguments: '<generator> <action> [name]',
+  arguments: [{
+    flags: '<generator>',
+    description: 'Generator to generate'
+  }, {
+    flags: '<action>',
+    description: 'Generator action'
+  }, {
+    flags: '[name]',
+    description: 'Specify name attribute'
+  }],
   options: [{
     flags: '--dry',
-    description: 'perform a dry run. files will be generated but not saved.',
+    description: 'Perform a dry run. files will be generated but not saved.',
   }, {
-    flags: '-f, --force',
-    description: 'overwrite files that already exist without confirmation',
+    flags: '-f --force',
+    description: 'Overwrite files that already exist without confirmation',
   }, {
-    flags: '-n, --name <name>',
-    description: 'simplified definition of `name` attribute ',
+    flags: '-n --name <name>',
+    description: 'Simplified definition of `name` attribute ',
   }, {
-    flags: '-A <attr>=<value>',
-    description: 'set <attr> to <value>',
-    validator: CliOptionsRepeat
-  }, {
-    flags: '--af',
-    description: 'attribute file to load'
-  }, {
-    flags: '--ap',
-    description: 'attribute path to merge from attribute file'
+    flags: '-A --attr <var>=<value>',
+    description: 'Set <var> to <value>',
+    type: 'repeatable'
   }]
 }
 
