@@ -1,12 +1,11 @@
 import {Command} from "commander";
 import path = require("path");
-import execa = require('execa');
 import enquirer = require('enquirer');
 
 import {CliOptions, RunnerConfig} from "./types";
 import * as commands from "./cmds";
 import {GenericLogger} from "./logger";
-import {commandArgsToOpts} from "./utils";
+import {commandArgsToOpts, shell} from "./utils";
 
 const pkg = require("../package.json");
 const defaultTemplates = path.join(__dirname, '../templates');
@@ -57,7 +56,7 @@ function buildRunnerConfig(): RunnerConfig {
     debug: !!process.env.DEBUG,
     exec: (command, body) => {
       const opts = body && body.length > 0 ? { input: body } : {}
-      return execa.shell(command, opts)
+      return shell(command, opts)
     },
     // @ts-ignore
     createPrompter: () => enquirer

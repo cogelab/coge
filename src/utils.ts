@@ -71,3 +71,7 @@ export function set(obj: object, path: string, value: any, create?: boolean) {
 function isObject(obj) {
   return typeof obj === 'object' && obj !== null
 }
+
+export function shell(command, options) {
+  return require('execa')(command, [], {shell: true, ...options});
+}

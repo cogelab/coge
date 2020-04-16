@@ -1,5 +1,6 @@
 import {createLogger} from "./support";
 import {CliOptions} from "../types";
+import {shell} from "../utils";
 
 const path = require('path')
 const dirCompare = require('dir-compare')
@@ -30,7 +31,7 @@ const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
     cwd: metaDir,
     exec: (action, body) => {
       const opts = body && body.length > 0 ? {input: body} : {}
-      return require('execa').shell(action, opts)
+      return shell(action, opts)
     },
     logger,
     createPrompter: () => require('enquirer'),
