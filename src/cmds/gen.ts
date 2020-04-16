@@ -10,16 +10,16 @@ export const gen: CliCmdDefinition = {
   arguments: '<generator> <action> [name]',
   options: [{
     flags: '--dry',
-    description: 'Perform a dry run. Files will be generated but not saved.',
+    description: 'perform a dry run. files will be generated but not saved.',
   }, {
-    flags: '-i, --interactive <interactive>',
-    description: 'Execute with interactive mode',
+    flags: '-f, --force',
+    description: 'force to perform the run without interactive confirming',
   }, {
     flags: '-n, --name <name>',
-    description: 'Specify name',
+    description: 'simplified definition of `name` attribute ',
   }, {
-    flags: '-a, --attr <attr>',
-    description: 'Set a custom attribute',
+    flags: '-A <attr>=<value>',
+    description: 'set <attr> to <value>',
     validator: Repest
   }]
 }

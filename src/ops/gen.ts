@@ -3,12 +3,13 @@ import {createResult} from '../utils'
 
 import path = require('path');
 import fs = require('fs-extra');
+import {GenerateOptions} from "../generate";
 
 const {red} = require('chalk');
 
 export async function gen(
   action: RenderedAction,
-  args: any,
+  opts: GenerateOptions,
   {cwd, createPrompter}: RunnerConfig,
   logger: Logger
 ): Promise<OpResult> {
@@ -21,26 +22,24 @@ export async function gen(
     return result('ignored')
   }
   const absTo = path.resolve(cwd, to)
-  const shouldNotOverwrite =
-    unless_exists !== undefined && unless_exists === true
+  const shouldNotOverwrite = unless_exists !== undefined && unless_exists === true
 
-  if (!process.env.COGE_OVERWRITE && (await fs.pathExists(absTo))) {
+  if (!process.env.COGE_OVERWRITE && !opts.force && (await fs.pathExists(absTo))) {
     if (
       shouldNotOverwrite ||
-      !(await prompter
-        .prompt({
-          prefix: '',
-          type: 'confirm',
-          name: 'overwrite',
-          message: red(`  exists: ${to}. Overwrite? (y/N): `),
-        }).then(({overwrite}) => overwrite))
+      !(await prompter.prompt({
+        prefix: '',
+        type: 'confirm',
+        name: 'overwrite',
+        message: red(`  exists: ${to}. Overwrite? (y/N): `),
+      }).then(({overwrite}) => overwrite))
     ) {
-      logger.warn(`  skipped: ${to}`)
-      return result('skipped')
+      logger.warn(`  skipped: ${to}`);
+      return result('skipped');
     }
   }
 
-  if (!args.dry) {
+  if (!opts.dry) {
     await fs.ensureDir(path.dirname(absTo))
     await fs.writeFile(absTo, action.body)
   }

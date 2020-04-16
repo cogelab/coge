@@ -6,11 +6,19 @@ import {ParamsResolver} from "./resolvers/params";
 
 import {render} from "./render";
 import {resolveOps} from "./ops";
-import {undasherize} from "./utils";
 import {LocalsResolver} from "./resolvers/locals";
 import {AttrsResolver} from "./resolvers/attrs";
 
-export async function generate(opts: any, conf: RunnerConfig, logger: Logger) {
+export interface GenerateOptions {
+  generator: string;
+  action: string;
+  force?: boolean;
+  dry?: boolean;
+  name?: string;
+  A?: string[];
+}
+
+export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
   const resolvedConfig = await ConfigResolver.resolve(conf);
   const {templates} = resolvedConfig;
   try {
@@ -28,13 +36,12 @@ export async function generate(opts: any, conf: RunnerConfig, logger: Logger) {
   }
 }
 
-async function doGenerate(opts: any, conf: RunnerConfig, logger: Logger) {
+async function doGenerate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
   const {cwd, templates} = conf;
-  const {attr, name} = opts;
+  const {A, name} = opts;
 
   const params = ParamsResolver.resolve(conf, opts);
-  const attrs = Object.assign(AttrsResolver.resolve(attr), {cwd}, name && {name});
-
+  const attrs = Object.assign(AttrsResolver.resolve(A), {cwd}, name && {name});
   const locals = await LocalsResolver.resolve(conf, params, attrs);
   const {generator, folder} = params;
 

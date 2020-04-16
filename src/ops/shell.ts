@@ -1,11 +1,12 @@
 import {OpResult, Logger, RenderedAction, RunnerConfig} from '../types'
 import {createResult} from '../utils'
+import {GenerateOptions} from "../generate";
 
 const notEmpty = x => x && x.length > 0
 
 export async function shell(
   {attributes: {sh}, body}: RenderedAction,
-  opts,
+  opts: GenerateOptions,
   {exec}: RunnerConfig,
   logger: Logger
 ): Promise<OpResult> {

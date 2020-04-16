@@ -3,10 +3,11 @@ import path = require('path')
 import {OpResult, RenderedAction, RunnerConfig, Logger} from '../types'
 import {createResult} from '../utils'
 import {injector} from '../injector'
+import {GenerateOptions} from "../generate";
 
 export async function inject(
   action: RenderedAction,
-  args: any,
+  opts: GenerateOptions,
   {cwd}: RunnerConfig,
   logger: Logger
 ): Promise<OpResult> {
@@ -32,7 +33,7 @@ export async function inject(
   const content = (await fs.readFile(absTo)).toString()
   const injectResult = injector(action, content)
 
-  if (!args.dry) {
+  if (!opts.dry) {
     await fs.writeFile(absTo, injectResult)
   }
   logger.notice(`      inject: ${to}`)

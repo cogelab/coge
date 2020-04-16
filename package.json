@@ -44,7 +44,6 @@
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {
-    "@types/chalk": "^2.2.0",
     "@types/ejs": "^3.0.2",
     "@types/fs-extra": "^8.1.0",
     "@types/inflection": "^1.5.28",

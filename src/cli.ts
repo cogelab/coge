@@ -16,7 +16,7 @@ export async function cli(argv: any[], options: CliOptions = {}) {
   const logger = l || new GenericLogger(console.log.bind(console));
 
   const prog = new Command();
-  prog.storeOptionsAsProperties(false)
+  prog.storeOptionsAsProperties(false);
   prog.version(pkg.version);
 
   const conf = Object.assign(buildRunnerConfig(), config);

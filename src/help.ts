@@ -1,11 +1,11 @@
-import {Logger} from './types'
 import fs = require('fs');
 import path = require('path');
-import chalk = require('chalk');
+import chalk from 'chalk';
+import {Logger} from './types';
 
 const pkg = require('../package.json')
 
-const availableGroups = (templates: string) => {
+function availableGroups(templates: string): { [name: string]: string[] } {
   const generators = fs
     .readdirSync(templates)
     .filter(_ => fs.lstatSync(path.join(templates, _)).isDirectory())
@@ -39,8 +39,7 @@ const printHelp = (templates: string, logger: Logger) => {
     return
   }
   Object.entries(availableGroups(templates)).forEach(([k, v]) => {
-    // @ts-ignore
-    logger.log(`${chalk.bold(k)}: ${v.join(', ')}`)
+    logger.log(`- ${chalk.bold(chalk.cyan(k))}: ${chalk.cyan(v.join(', '))}`)
   })
 }
 
