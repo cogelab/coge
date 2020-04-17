@@ -34,10 +34,10 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "standalone": "rm -rf standalone; npm run build && npx pkg package.json --out-path standalone && npm run standalone:postprocess",
+    "standalone": "npx rimraf standalone; npm run build && npx pkg package.json --out-path standalone && npm run standalone:postprocess",
     "standalone:postprocess": "node scripts/standalone.js",
     "standalone:brew-sha": "shasum -a 256 standalone/*.macos.*.tar.gz",
-    "clean": "rimraf lib",
+    "clean": "npx rimraf lib",
     "format": "prettier --write \"{src,test}/**/*.ts\" --single-quote --trailing-comma es5",
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean && echo Using TypeScript && tsc --version",
