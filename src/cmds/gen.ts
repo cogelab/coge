@@ -1,6 +1,6 @@
 import {CliCmdDefinition, CmdOptions} from "../types";
 import {generate, GenerateOptions} from "../generate";
-import {CliOptionsRepeat} from "../cli-validators";
+import {AttrsResolver} from "../resolvers/attrs";
 
 export const gen: CliCmdDefinition = {
   name: 'gen',
@@ -27,13 +27,15 @@ export const gen: CliCmdDefinition = {
     flags: '-n --name <name>',
     description: 'Simplified definition of `name` attribute ',
   }, {
-    flags: '-A --attr <var>=<value>',
-    description: 'Set <var> to <value>',
-    type: 'repeatable'
+    flags: '-D --data <var>=<value>',
+    description: 'Set data <var> to <value>',
+    type: 'repeatable',
   }]
 }
 
 async function action({conf, opts, logger}: CmdOptions) {
-  return await generate(<GenerateOptions>opts, conf, logger);
+  const {data, ...others} = opts;
+  others.attrs = AttrsResolver.resolve(data);
+  return await generate(<GenerateOptions>others, conf, logger);
 }
 

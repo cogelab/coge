@@ -8,7 +8,6 @@ import {ParamsResolver} from "./resolvers/params";
 import {render} from "./render";
 import {resolveOps} from "./ops";
 import {LocalsResolver} from "./resolvers/locals";
-import {AttrsResolver} from "./resolvers/attrs";
 import {ErrorWithInstruction} from "./errors";
 
 export interface GenerateOptions {
@@ -17,7 +16,7 @@ export interface GenerateOptions {
   force?: boolean;
   dry?: boolean;
   name?: string;
-  attr?: string[];
+  attrs?: {[name: string]: any};
 }
 
 export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
@@ -43,10 +42,10 @@ export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger
 
 async function doGenerate(opts: GenerateOptions, conf: RunnerConfig, logger: Logger) {
   const {cwd, templates} = conf;
-  const {attr, name} = opts;
+  const {name} = opts;
 
   const params = ParamsResolver.resolve(conf, opts);
-  const attrs = Object.assign(AttrsResolver.resolve(attr), {cwd}, name && {name});
+  const attrs = Object.assign({}, opts.attrs, {cwd}, name && {name});
   const locals = await LocalsResolver.resolve(conf, params, attrs);
   const {generator, folder} = params;
 
