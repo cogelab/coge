@@ -9,10 +9,9 @@ export interface Logger {
 
 type CliCmdValidatorFn = (str: string) => any;
 type CliCmdValidatorArg = string[] | string | RegExp | CliCmdValidatorFn | Number;
-
 type CliCmdActionCallback = (opts: CmdOptions) => Promise<any>;
-
 type CliCmdOptionType = 'int' | 'float' | 'bool' | 'list' | 'repeatable';
+type CliCompleteFn = () => Promise<string[]>;
 
 export interface CliCmdArgument {
   flags: string;
@@ -20,6 +19,7 @@ export interface CliCmdArgument {
   type?: CliCmdOptionType;
   validator?: CliCmdValidatorArg;
   defaultValue?: any;
+  complete?: CliCompleteFn;
 }
 
 export interface CliCmdOption {
@@ -29,6 +29,7 @@ export interface CliCmdOption {
   validator?: CliCmdValidatorArg;
   defaultValue?: any;
   required?: boolean;
+  complete?: CliCompleteFn;
 }
 
 export interface CliCmdDefinition {

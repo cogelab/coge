@@ -9,7 +9,7 @@ export const gen: CliCmdDefinition = {
   action,
   arguments: [{
     flags: '<generator>',
-    description: 'Generator to generate'
+    description: 'Generator to generate',
   }, {
     flags: '<action>',
     description: 'Generator action'

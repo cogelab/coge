@@ -38,17 +38,23 @@ function buildProgram(options: CliOptions = {}) {
     }
     if (c.arguments) {
       for (const a of c.arguments) {
-        cmd.argument(a.flags, a.description, a.validator, a.defaultValue);
+        const arg = cmd.argument(a.flags, a.description, a.validator, a.defaultValue);
+        if (a.complete) {
+          arg.complete(a.complete);
+        }
       }
     }
 
     if (c.options) {
       for (const o of c.options) {
-        cmd.option(o.flags, o.description,
+        const opt = cmd.option(o.flags, o.description,
           o.validator || (o.type && prog[o.type.toUpperCase()]),
           o.defaultValue,
           o.required
         );
+        if (o.complete) {
+          opt.complete(o.complete);
+        }
       }
     }
   }
