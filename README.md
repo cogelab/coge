@@ -24,7 +24,6 @@
 ✅ __Support deep attribute options with CLI arguments__  
 ✅ __Automatic attribute value type inference__  
 
-
 ## Quick Start
 
 Coge can be used to supercharge your workflow with [Redux](http://www.coge.io/redux), [React Native](http://www.coge.io/react-native), [Express](http://www.coge.io/express) and more, by allowing you avoid manual work and generate, add, inject and perform custom operations on your codebase.
