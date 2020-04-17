@@ -39,7 +39,6 @@
     "standalone:brew-sha": "shasum -a 256 standalone/*.macos.*.tar.gz",
     "clean": "npx rimraf lib",
     "format": "npx prettier --write \"{src,test}/**/*.ts\" --single-quote --trailing-comma es5",
-    "prepublishOnly": "npm run build",
     "prebuild": "npm run clean && echo Using TypeScript && npx tsc --version",
     "build": "npx tsc --pretty",
     "preversion": "npm test",
