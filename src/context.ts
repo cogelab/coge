@@ -27,7 +27,7 @@ const doCapitalization = (hsh, [key, value]) => {
 const localsToCapitalize = ['name'];
 const localsDefaults = {
   name: 'unnamed',
-  action: 'gen'
+  action: '',
 };
 
 const capitalizedLocals = (locals: any) => Object.entries(locals).reduce(doCapitalization, {});

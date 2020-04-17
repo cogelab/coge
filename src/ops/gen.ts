@@ -31,7 +31,7 @@ export async function gen(
         prefix: '',
         type: 'confirm',
         name: 'overwrite',
-        message: red(`  exists: ${to}. Overwrite? (y/N): `),
+        message: red(`exists: ${to}. Overwrite? (y/N): `),
       }).then(({overwrite}) => overwrite))
     ) {
       logger.warn(`  skipped: ${to}`);
