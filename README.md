@@ -11,18 +11,18 @@
 
 ## Features
 
-✅ Build ad-hoc generators quickly and full on project scaffolds.
-✅ Local generators per project (and global, if you must)
-✅ Built-in scaffolds to quickly create generators
-✅ Full logic templates and rendering
-✅ Prompts and flows for taking in arguments
-✅ Automatic CLI arguments
-✅ Adding new files
-✅ Injecting into existing files
-✅ Running shell commands
-✅ Super fast, constantly optimized for speed
-✅ Support deep attribute options with CLI arguments
-✅ Automatic attribute value type inference
+✅ Build ad-hoc generators quickly and full on project scaffolds.  
+✅ Local generators per project (and global, if you must)  
+✅ Built-in scaffolds to quickly create generators  
+✅ Full logic templates and rendering  
+✅ Prompts and flows for taking in arguments  
+✅ Automatic CLI arguments  
+✅ Adding new files  
+✅ Injecting into existing files  
+✅ Running shell commands  
+✅ Super fast, constantly optimized for speed  
+✅ __Support deep attribute options with CLI arguments__  
+✅ __Automatic attribute value type inference__  
 
 
 ## Quick Start
