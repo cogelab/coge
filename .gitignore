@@ -6,3 +6,4 @@ npm-debug.log
 *.iml
 lib
 src/__tests__/metaverse/**/given/
+standalone

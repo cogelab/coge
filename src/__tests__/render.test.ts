@@ -1,5 +1,5 @@
 import path = require('path');
-import fs = require('fs');
+import fs = require('fs-extra');
 import {render} from '../render';
 
 const fixture = name => path.join(__dirname, './fixtures', name)

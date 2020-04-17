@@ -1,4 +1,4 @@
-import fs = require('fs');
+import fs = require('fs-extra');
 import path = require('path');
 import chalk from 'chalk';
 import {Logger} from './types';

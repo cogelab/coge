@@ -73,7 +73,7 @@ function isObject(obj) {
 }
 
 export function shell(command, options) {
-  return require('execa')(command, [], {shell: true, ...options});
+  return require('execa')(command, {shell: true, ...options});
 }
 
 export function assign(target, ...sources) {

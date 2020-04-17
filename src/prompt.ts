@@ -1,5 +1,5 @@
 import path = require('path');
-import fs = require('fs');
+import fs = require('fs-extra');
 import {Prompter} from './types'
 
 interface InteractionParams {
@@ -12,7 +12,7 @@ interface InteractionPrompt {
 
 type InteractionOptions = { type: string, name: string, message: string }[];
 
-type Interaction = InteractionParams | InteractionPrompt | InteractionOptions;
+// type Interaction = InteractionParams | InteractionPrompt | InteractionOptions;
 
 const InteractionFiles = ['prompt.js', 'index.js'];
 export async function prompt<Q, T>(
