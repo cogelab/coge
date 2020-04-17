@@ -40,7 +40,8 @@ const printHelp = (templates: string, logger: Logger) => {
   }
   Object.entries(availableGroups(templates)).forEach(([k, v]) => {
     logger.log(`- ${chalk.bold(chalk.cyan(k))}: ${chalk.cyan(v.join(', '))}`)
-  })
+  });
+  logger.log('');
 }
 
 export {availableGroups, printHelp}

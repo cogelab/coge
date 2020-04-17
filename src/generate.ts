@@ -1,4 +1,5 @@
 import * as fs from "fs-extra";
+import chalk from 'chalk';
 import {RunnerConfig, Logger, Op} from "./types";
 import {ConfigResolver} from "./resolvers/config";
 import {printHelp} from "./help";
@@ -8,6 +9,7 @@ import {render} from "./render";
 import {resolveOps} from "./ops";
 import {LocalsResolver} from "./resolvers/locals";
 import {AttrsResolver} from "./resolvers/attrs";
+import {ErrorWithInstruction} from "./errors";
 
 export interface GenerateOptions {
   generator: string;
@@ -25,9 +27,12 @@ export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger
     const actions = await doGenerate(opts, resolvedConfig, logger);
     return {success: true, actions, time: 0}
   } catch (err) {
-    logger.log(err.toString())
+    logger.err(err.toString());
+    if (err instanceof ErrorWithInstruction) {
+      logger.log(err.instruction);
+    }
     if (resolvedConfig.debug) {
-      logger.log('details -----------')
+      logger.log('\n-------------------')
       logger.log(err.stack)
       logger.log('-------------------')
     }
@@ -47,18 +52,16 @@ async function doGenerate(opts: GenerateOptions, conf: RunnerConfig, logger: Log
 
   opts.dry && logger.log('(dry mode)')
   if (!generator) {
-    throw new Error('please specify a generator.')
+    throw new Error('Please specify a generator.')
   }
 
   logger.log(`Loaded templates: ${templates!.replace(`${cwd}/`, '')}`)
 
   if (!(await fs.pathExists(folder!))) {
-    throw new Error(`I can't find generator '${generator}'.
-
+    throw new ErrorWithInstruction(`I can't find generator '${generator}'`, `
       You can try:
-      1. 'coge generator init' to initialize your project, and
-      2. 'coge generator new ${generator}' to build the generator you wanted.
-      `)
+      1. ${chalk.yellow("coge generator init")} to initialize your project, and
+      2. ${chalk.yellow("coge generator new " + generator)} to build the generator you wanted.`);
   }
 
   // lazy loading these dependencies gives a better feel once
