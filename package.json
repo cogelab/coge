@@ -49,7 +49,7 @@
     "test:win32": "jest --runInBand metaverse",
     "test:code": "jest",
     "test:metaverse": "jest metaverse",
-    "test:require": "node lib/cli.timed.js init self; rm -rf _templates"
+    "test:require": "node lib/cli.timed.js generator init; rm -rf _templates"
   },
   "dependencies": {
     "caporal": "^1.3.0",
