@@ -3,7 +3,7 @@
   "version": "0.1.4",
   "description": "An efficient code generator.",
   "license": "MIT",
-  "repository": "https://gitr.net/ty/coge",
+  "repository": "https://github.com/taoyuan/coge",
   "author": "",
   "keywords": [
     "coge",
@@ -45,7 +45,7 @@
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push && git push --tags",
-    "test": "npm run test:code && npm run test:require",
+    "test": "npm run clean && npm run build && npm run test:code && npm run test:require",
     "test:win32": "jest --runInBand metaverse",
     "test:code": "jest",
     "test:metaverse": "jest metaverse",
