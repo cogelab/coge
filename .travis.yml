@@ -1,6 +1,22 @@
 language: node_js
+cache: yarn
 node_js:
-  - '10'
-  - '12'
-script:
-  - npm test  # run mocha unit tests with coverage
+  - "12"
+  - node
+
+script: npm test
+
+jobs:
+  include:
+    - stage: binary releases
+      script: npm run standalone
+      if: tag =~ ^v\d.*
+      node_js: "12"
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file_glob: true
+        file: standalone/*
+        skip_cleanup: true
+        on:
+          tags: true
