@@ -1,12 +1,3 @@
-export interface Logger {
-  ok: (msg: string) => void
-  notice: (msg: string) => void
-  warn: (msg: string) => void
-  err: (msg: string) => void
-  log: (msg: string) => void
-  colorful: (msg: string) => void
-}
-
 type CliCmdValidatorFn = (str: string) => any;
 type CliCmdValidatorArg = string[] | string | RegExp | CliCmdValidatorFn | Number;
 type CliCmdActionCallback = (opts: CmdOptions) => Promise<any>;
@@ -45,6 +36,15 @@ export interface CliCmdDefinition {
 
 export interface CliOptions extends Partial<RunnerConfig> {
   logger?: Logger;
+}
+
+export interface Logger {
+  ok: (msg: string) => void
+  notice: (msg: string) => void
+  warn: (msg: string) => void
+  err: (msg: string) => void
+  log: (msg: string) => void
+  colorful: (msg: string) => void
 }
 
 export interface Loader {
