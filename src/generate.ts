@@ -31,7 +31,8 @@ export async function generate(opts: GenerateOptions, conf: RunnerConfig, logger
       logger.log(err.instruction);
     }
     if (resolvedConfig.debug) {
-      logger.log('\n-------------------')
+      logger.log('')
+      logger.log('-------------------')
       logger.log(err.stack)
       logger.log('-------------------')
     }
