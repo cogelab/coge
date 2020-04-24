@@ -1,6 +1,6 @@
 # coge
 
-[![build status](https://img.shields.io/travis/taoyuan/coge/master.svg)](https://travis-ci.org/taoyuan/coge)
+[![build status](https://img.shields.io/travis/cogelab/coge/master.svg)](https://travis-ci.org/cogelab/coge)
 [![npm version](https://img.shields.io/npm/v/coge.svg)](https://www.npmjs.com/package/coge)
 
 > An efficient code generator.
@@ -31,7 +31,7 @@ Coge can be used to supercharge your workflow with [Redux](http://www.coge.io/re
 If you're on macOS and have Homebrew:
 
 ```
-$ brew tap taoyuan/tap
+$ brew tap cogelab/tap
 $ brew install coge
 ```
 
@@ -47,7 +47,7 @@ If you like a no-strings-attached approach, you can use `npx` without installing
 $ npx coge ...
 ```
 
-For other platforms, see [releases](https://github.com/taoyuan/coge/releases).
+For other platforms, see [releases](https://github.com/cogelab/coge/releases).
 
 Initialize `coge` in your project (do this once per project):
 

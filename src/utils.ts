@@ -3,30 +3,6 @@ export function undasherize(str: string, low_first_letter?: boolean) {
   return low_first_letter ? answer[0].toLowerCase() + answer.slice(1) : answer;
 }
 
-export function createResult(type, subject, start = new Date()) {
-  return (status, payload?, end = new Date()) => ({
-    type,
-    subject,
-    status,
-    timing: end.getTime() - start.getTime(),
-    ...(payload && {payload}),
-  })
-}
-
-export function commandArgsToOpts(cmd) {
-  let {args, _args: defs} = cmd;
-  if (!defs || !defs.length || !args || !args.length) {
-    return {};
-  }
-  if (defs.length > args.length) {
-    defs = defs.slice(0, args.length);
-  }
-  return defs.reduce((answer, def, idx) => {
-    answer[def.name] = args[idx];
-    return answer;
-  }, {});
-}
-
 /**
  * Sets a value of a property in an object tree.
  * Missing objects will (optionally) be created.
@@ -72,10 +48,6 @@ function isObject(obj) {
   return typeof obj === 'object' && obj !== null
 }
 
-export function shell(command, options) {
-  return require('execa')(command, {shell: true, ...options});
-}
-
 export function assign(target, ...sources) {
   for (const source of sources) {
     if (!sources) continue;
@@ -87,4 +59,18 @@ export function assign(target, ...sources) {
     }
   }
   return target;
+}
+
+export function createResult(type, subject, start = new Date()) {
+  return (status, payload?, end = new Date()) => ({
+    type,
+    subject,
+    status,
+    timing: end.getTime() - start.getTime(),
+    ...(payload && {payload}),
+  })
+}
+
+export function shell(command, options) {
+  return require('execa')(command, {shell: true, ...options});
 }

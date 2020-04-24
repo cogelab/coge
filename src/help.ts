@@ -33,7 +33,7 @@ const printHelp = (templates: string, logger: Logger) => {
 
       $ coge my-generator
 
-      See https://github/taoyuan/coge for more.
+      See https://github/cogelab/coge for more.
 
       `)
     return

@@ -18,7 +18,7 @@ SHA = "${sha}"
 class Coge < Formula
   desc "An efficient code generator."
   homepage "http://www.coge.dev"
-  url "https://github.com/taoyuan/coge/releases/download/v#{VER}/coge.macos.v#{VER}.tar.gz"
+  url "https://github.com/cogelab/coge/releases/download/v#{VER}/coge.macos.v#{VER}.tar.gz"
   version VER
   sha256 SHA
 
