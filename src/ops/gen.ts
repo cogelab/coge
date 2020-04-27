@@ -25,8 +25,9 @@ export async function gen(
   }
   const absTo = path.resolve(cwd, to)
   const shouldNotOverwrite = unless_exists !== undefined && unless_exists === true;
-  const exists = await fs.pathExists(absTo) ? (await fs.readFile(absTo)).toString('utf8') : '';
-  const identical = exists && (exists == action.body);
+  const exists = await fs.pathExists(absTo);
+  const content = exists ? (await fs.readFile(absTo)).toString('utf8') : undefined;
+  const identical = exists && (content == action.body);
 
   if (exists && !identical) {
     if (!process.env.COGE_OVERWRITE && !opts.force && !session.overwrite) {
