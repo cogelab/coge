@@ -77,16 +77,16 @@ You've generated content into the current working directory in `app/`. To see ho
 You can build a generator that uses an interactive prompt to fill in a variable:
 
 ```
-$ coge template:cli mygen
+$ coge template:prompt mygen
 
-  create: templates/mygen/cli/hello.ejs.t
-  create: templates/mygen/cli/prompt.js
+  create: templates/mygen/prompt/hello.ejs.t
+  create: templates/mygen/prompt/prompt.js
 ```
 
 Done! Now let's use `mygen`:
 
 ```
-$ coge mygen:cli
+$ coge mygen:prompt
 ? What's your message? hello
 
   create: app/hello.js
