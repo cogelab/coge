@@ -1,47 +1,41 @@
-import fs = require('fs-extra');
-import path = require('path');
-import chalk from 'chalk';
-import {Logger} from './types';
+import {Environment} from "coge-environment";
 
-const pkg = require('../package.json')
+import {NoTemplates} from "./instructions";
 
-function availableGroups(templates: string): { [name: string]: string[] } {
-  const generators = fs
-    .readdirSync(templates)
-    .filter(_ => fs.lstatSync(path.join(templates, _)).isDirectory())
-  return generators.reduce((acc, generator) => {
-    acc[generator] = fs.readdirSync(path.join(templates, generator))
-    return acc
-  }, {})
-}
-
-const printHelp = (templates: string, logger: Logger) => {
-  logger.log(`${pkg.name} v${pkg.version}`)
-  logger.log('\nAvailable actions:')
-  if (!templates) {
-    logger.log(`No generators or actions found.
-
-      This means I didn't find a _templates folder right here,
-      or anywhere up the folder tree starting here.
-
-      Here's how to start using coge:
-
-      $ coge generator init
-      $ coge generator new my-generator
-
-      (edit your generator in _templates/my-generator)
-
-      $ coge my-generator
-
-      See https://github/cogelab/coge for more.
-
-      `)
-    return
+export function printHelp(env: Environment) {
+  const {adapter: {logger}} = env;
+  if (env.namespaces().length) {
+    logger.log('Available Templates:\n');
+    logger.log(availableTemplates(env));
+  } else {
+    logger.log(NoTemplates());
   }
-  Object.entries(availableGroups(templates)).forEach(([k, v]) => {
-    logger.log(`- ${chalk.bold(chalk.cyan(k))}: ${chalk.cyan(v.join(', '))}`)
-  });
-  logger.log('');
 }
 
-export {availableGroups, printHelp}
+export function availableTemplates(env: Environment) {
+  const templates = Object.keys(env.getTemplates()).reduce((namesByTemplate, template) => {
+    const parts = template.split(':');
+    const templateName = <string>parts.shift();
+
+    // If first time we found this template, prepare to save all its sub-templates
+    if (!namesByTemplate[templateName]) {
+      namesByTemplate[templateName] = [];
+    }
+
+    // If sub-template (!== app), save it
+    if (parts[0] !== 'app') {
+      namesByTemplate[templateName].push(parts.join(':'));
+    }
+
+    return namesByTemplate;
+  }, {});
+
+  if (Object.keys(templates).length === 0) {
+    return '  Couldn\'t find any templates, did you install any?' // 'Troubleshoot issues by running\n\n  $ coge doctor';
+  }
+
+  return Object.keys(templates).map(template => {
+    const subTemplates = templates[template].map(subTemplate => `    ${subTemplate}`).join('\n');
+    return `  ${template}${subTemplates.trim() ? '\n' + subTemplates : ''}`;
+  }).join('\n');
+}

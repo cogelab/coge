@@ -14,7 +14,7 @@ export const reversePathsToWalk = ({folder, path}) => {
   return results.reverse()
 }
 
-export const configLookup = (file: string, folder: string, path: any = importedPath) =>
+export const lookup = (file: string, folder: string, path: any = importedPath) =>
   uniq(reversePathsToWalk({folder, path}).map(p => path.join(p, file)))
 
 export class FileResolver {
@@ -27,9 +27,9 @@ export class FileResolver {
   }
 
   async resolve(from: string) {
-    const configCandidates = configLookup(this.file, from)
+    const candidates = lookup(this.file, from)
     const {exists, load, none} = this.loader
-    for (const candidate of configCandidates) {
+    for (const candidate of candidates) {
       if (await exists(candidate)) {
         return load(candidate)
       }

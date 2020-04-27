@@ -1,6 +1,6 @@
 import path = require('path');
-import fs = require('fs-extra');
-import {render} from '../render';
+import {render} from '../rendering';
+import {MockContext} from "./mocks/context";
 
 const fixture = name => path.join(__dirname, './fixtures', name)
 
@@ -10,7 +10,9 @@ describe('render ng', () => {
     const expectedFile = /empty/
     const expectedBody = ''
     // act
-    const actual = await render({folder: fixture('app/action-empty')})
+    const actual = await render(new MockContext(), {
+      dir: fixture('app/group-empty'),
+    })
     const actualFile = actual[0].file
     const actualBody = actual[0].body
     // assert
@@ -23,8 +25,8 @@ describe('render ng', () => {
     const expectedFileName = /full/
     const expectedFilePath = 'foo/someone/bar'
     // act
-    const actual = await render({
-      folder: fixture('app/action-full'),
+    const actual = await render(new MockContext(), {
+      dir: fixture('app/group-full'),
     }, {
       bill: 17,
       name: 'someone',
@@ -51,8 +53,8 @@ describe('render ng', () => {
     const expectedFile = /capitalized/
     const expectedBody = /someone and Someone/
     // act
-    const response = await render({
-      folder: fixture('app/action-capitalized'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-capitalized'),
     }, {
       name: 'someone',
     })
@@ -68,8 +70,8 @@ describe('render ng', () => {
     const expectedFile = /capitalized/
     const expectedBody = /unnamed and Unnamed/
     // act
-    const response = await render({
-      folder: fixture('app/action-capitalized-defaults'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-capitalized-defaults'),
     })
     const actualFile = response[0].file
     const actualBody = response[0].body
@@ -78,14 +80,14 @@ describe('render ng', () => {
     expect(actualBody).toMatch(expectedBody)
   })
 
-  it('should render all files in an action folder ', async () => {
+  it('should render all files in an group folder ', async () => {
     // setup
     const expectedFileCount = 2
     const expectedFileOne = /capitalized/
     const expectedFileTwo = /full/
     // act
-    const response = await render({
-      folder: fixture('app/action-multifiles'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-multifiles'),
     }, {
       bill: 17
     })
@@ -104,8 +106,8 @@ describe('render ng', () => {
     const expectedFileOne = /capitalized/
     const expectedFileTwo = /full/
     // act
-    const response = await render({
-      folder: fixture('app/action-multifiles-nest'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-multifiles-nest'),
     }, {
       bill: 17
     })
@@ -123,8 +125,8 @@ describe('render ng', () => {
     const expectedFileCount = 1
     const expectedFile = /capitalized/
     // act
-    const response = await render({
-      folder: fixture('app/action-multifiles'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-multifiles'),
       pattern: 'capitalized',
     }, {
       bill: 17
@@ -138,8 +140,8 @@ describe('render ng', () => {
 
   // FIXME this test doesn't seem to be actually testing injection unless i'm missing something
   it('inject', async () => {
-    const res = await render({
-      folder: fixture('app/action-inject'),
+    const res = await render(new MockContext(), {
+      dir: fixture('app/group-inject'),
     }, {
       name: 'devise',
     })
@@ -148,13 +150,13 @@ describe('render ng', () => {
     expect(res[0].body).toMatch("gem 'devise'")
   })
 
-  it('should allowrs to use changeCase helpers in templates', async () => {
+  it('should allows to use changeCase helpers in templates', async () => {
     // setup
     const expectedFile = /nake/
     const expectedBody = /foo_bar/
     // act
-    const response = await render({
-      folder: fixture('app/action-change-case'),
+    const response = await render(new MockContext(), {
+      dir: fixture('app/group-change-case'),
     }, {
       name: 'FooBar',
     })

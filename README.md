@@ -61,8 +61,8 @@ Build your first generator, called `mygen`:
 ```
 $ coge generator new mygen
 
-Loaded templates: _templates
-  generated: _templates/mygen/new/hello.ejs.t
+Loaded templates: templates
+  generated: templates/mygen/new/hello.ejs.t
 ```
 
 Now you can use it:
@@ -70,20 +70,20 @@ Now you can use it:
 ```
 $ coge mygen gen
 
-Loaded templates: _templates
+Loaded templates: templates
   generated: app/hello.js
 ```
 
-You've generated content into the current working directory in `app/`. To see how is the generator built, look at `_templates` (which you should check-in to your project from now on, by the way).
+You've generated content into the current working directory in `app/`. To see how is the generator built, look at `templates` (which you should check-in to your project from now on, by the way).
 
 You can build a generator that uses an interactive prompt to fill in a variable:
 
 ```
 $ coge generator cli mygen
 
-Loaded templates: _templates
-  generated: _templates/mygen/cli/hello.ejs.t
-  generated: _templates/mygen/cli/prompt.js
+Loaded templates: templates
+  generated: templates/mygen/cli/hello.ejs.t
+  generated: templates/mygen/cli/prompt.js
 ```
 
 Done! Now let's use `mygen`:
@@ -92,6 +92,6 @@ Done! Now let's use `mygen`:
 $ coge mygen cli
 ? What's your message? hello
 
-Loaded templates: _templates
+Loaded templates: templates
   generated: app/hello.js
 ```

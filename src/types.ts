@@ -1,8 +1,12 @@
+import {Environment, PromptModule, Template} from "coge-environment";
+import {GenerateOptions} from "./generate";
+
 type CliCmdValidatorFn = (str: string) => any;
 type CliCmdValidatorArg = string[] | string | RegExp | CliCmdValidatorFn | Number;
-type CliCmdActionCallback = (opts: CmdOptions) => Promise<any>;
 type CliCmdOptionType = 'int' | 'float' | 'bool' | 'list' | 'repeatable';
 type CliCompleteFn = () => Promise<string[]>;
+
+export type CliCmdActionCallback = (context: Context, args: { [p: string]: any }, opts: { [p: string]: any }) => Promise<any>;
 
 export interface CliCmdArgument {
   flags: string;
@@ -34,27 +38,28 @@ export interface CliCmdDefinition {
   action: CliCmdActionCallback;
 }
 
-export interface CliOptions extends Partial<RunnerConfig> {
-  logger?: Logger;
-}
-
-export interface Logger {
-  ok: (msg: string) => void
-  notice: (msg: string) => void
-  warn: (msg: string) => void
-  err: (msg: string) => void
-  log: (msg: string) => void
-  colorful: (msg: string) => void
-}
+// export interface Logger {
+//   ok: (msg: string) => void
+//   notice: (msg: string) => void
+//   warn: (msg: string) => void
+//   err: (msg: string) => void
+//   log: (msg: string) => void
+//   colorful: (msg: string) => void
+// }
 
 export interface Loader {
-  exists: (arg0: string) => Promise<boolean>
-  load: (arg0: string) => Promise<Record<string, any>>
-  none: (arg0: string) => Record<string, any>
+  exists: (file: string) => Promise<boolean>;
+  load: (file: string) => Promise<Record<string, any>>;
+  none: (file: string) => Record<string, any>;
+}
+
+export interface RunnerSettings {
+  cwd?: string;
+  prompt?: PromptModule;
 }
 
 export interface Prompter<Q, T> {
-  prompt: (arg0: Q) => Promise<T>
+  prompt: (questions: Q) => Promise<T>
 }
 
 export interface RenderedAction {
@@ -63,31 +68,40 @@ export interface RenderedAction {
   body: string
 }
 
-export interface RunnerConfig {
-  cwd: string
-  templates: string
-  exec: (sh: string, body: string) => void
-  debug: boolean
-  helpers: any
-  createPrompter: <Q, T>() => Prompter<Q, T>
+export interface TemplateHelpersBuilder {
+  (locals: Record<string, any>, context: Context): Record<string, any>;
 }
 
-export type Params = {
-  templates: string;
-  generator: string;
-  action: string;
-  folder?: string;
+export interface Context extends Record<string, any> {
+  cwd: string;
+  env: Environment;
+  helpers?: TemplateHelpersBuilder | Record<string, any>;
+}
+
+export interface TemplateConfig {
+  params?: {
+    type?: string;
+    name: string;
+    message: string;
+  }[];
+
+  [p: string]: any;
+}
+
+export interface TemplateEntry {
+  dir: string;
+  template: Template;
+  config: TemplateConfig;
   pattern?: string;
-  dry?: boolean;
-  // name?: string;
 }
 
-export type CmdOptions = {
-  conf: RunnerConfig;
-  opts: { [k: string]: any };
-  logger: Logger;
+export interface OpSession {
+  context: Context;
+  overwrite?: boolean;
 }
 
 export type OpResult = any
-export type Op = (action: RenderedAction, opts: any, conf: RunnerConfig, logger: Logger) => Promise<OpResult>
+export type Op = (session: OpSession, action: RenderedAction, opts: GenerateOptions) => Promise<OpResult>
+
+
 

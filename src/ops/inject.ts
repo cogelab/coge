@@ -1,19 +1,20 @@
 import fs = require('fs-extra');
 import path = require('path')
-import {OpResult, RenderedAction, RunnerConfig, Logger} from '../types'
+import {OpResult, RenderedAction} from '../types'
 import {createResult} from '../utils'
 import {injector} from '../injector'
 import {GenerateOptions} from "../generate";
+import {OpSession} from "../types";
 
 export async function inject(
-  action: RenderedAction,
+  {context: {cwd, env}}: OpSession,
+  group: RenderedAction,
   opts: GenerateOptions,
-  {cwd}: RunnerConfig,
-  logger: Logger
 ): Promise<OpResult> {
   const {
     attributes: {to, inject},
-  } = action
+  } = group;
+  const {logger} = env.adapter;
 
   const result = createResult('inject', to)
 
@@ -24,19 +25,19 @@ export async function inject(
   const absTo = path.resolve(cwd, to)
 
   if (!(await fs.pathExists(absTo))) {
-    logger.err(`Cannot inject to ${to}: doesn't exist.`)
+    logger.error(`Cannot inject to ${to}: doesn't exist.`)
     return result('error', {
       error: `Cannot inject to ${to}: doesn't exist.`,
     })
   }
 
   const content = (await fs.readFile(absTo)).toString()
-  const injectResult = injector(action, content)
+  const injectResult = injector(group, content)
 
   if (!opts.dry) {
     await fs.writeFile(absTo, injectResult)
   }
-  logger.notice(`      inject: ${to}`)
+  logger.inject(to)
 
   return result('inject')
 }

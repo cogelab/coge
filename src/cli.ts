@@ -1,79 +1,67 @@
 // @ts-ignore
 import {Caporal} from 'caporal';
-import Program = require("caporal/lib/program");
-import path = require("path");
-import enquirer = require('enquirer');
+import * as Program from "caporal/lib/program";
+import values from "@tiopkg/utils/object/values";
 
-import {CliOptions, RunnerConfig} from "./types";
 import * as commands from "./cmds";
-import {GenericLogger} from "./logger";
-import {assign, shell} from "./utils";
+import {CliCmdActionCallback, CliCmdDefinition, RunnerSettings} from "./types";
+import {DefaultContext} from "./context";
 
 const pkg = require("../package.json");
-const defaultTemplates = path.join(__dirname, '../templates');
 
-
-export async function cli(argv: any[], options: CliOptions = {}) {
-  return buildProgram(options).parse(argv);
+export async function cli(argv: any[], settings?: RunnerSettings) {
+  return createProgram(argv, settings);
 }
 
-function buildProgram(options: CliOptions = {}) {
-  let {logger: l, ...config} = options;
-  const logger = l || new GenericLogger(console.log.bind(console));
+async function createProgram(argv: any[], settings?: RunnerSettings) {
+  const program: Caporal = new Program();
+  program.version(pkg.version);
+  values(commands).forEach(def => registerCommand(program, def, settings));
+  return await program.parse(argv);
+}
 
-  const prog: Caporal = new Program();
-  prog.version(pkg.version);
+function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: RunnerSettings) {
+  const cmd = def.default ? program.description(def.description) : program.command(def.name, def.description);
+  cmd.action((args, opts) => perform(def.action, args, opts, settings));
 
-  const conf = Object.assign(buildRunnerConfig(), config);
-  for (const c of Object.values(commands)) {
-    // const cmd = prog.command(c.name, c.description, {isDefault: c.default});
-    const cmd = c.default ? prog.description(c.description) : prog.command(c.name, c.description);
-    cmd.action(async (args, opts) => {
-      opts = assign({}, args, opts);
-      return await c.action({conf, opts, logger});
-    });
+  if (def.help) {
+    cmd.help(def.help);
+  }
 
-    if (c.help) {
-      cmd.help(c.help);
-    }
-    if (c.arguments) {
-      for (const a of c.arguments) {
-        const arg = cmd.argument(a.flags, a.description, a.validator, a.defaultValue);
-        if (a.complete) {
-          arg.complete(a.complete);
-        }
-      }
-    }
-
-    if (c.options) {
-      for (const o of c.options) {
-        const opt = cmd.option(o.flags, o.description,
-          o.validator || (o.type && prog[o.type.toUpperCase()]),
-          o.defaultValue,
-          o.required
-        );
-        if (o.complete) {
-          opt.complete(o.complete);
-        }
+  if (def.arguments) {
+    for (const a of def.arguments) {
+      const arg = cmd.argument(a.flags, a.description, a.validator, a.defaultValue);
+      if (a.complete) {
+        arg.complete(a.complete);
       }
     }
   }
 
-  return prog;
+  if (def.options) {
+    for (const o of def.options) {
+      const opt = cmd.option(o.flags, o.description,
+        o.validator || (o.type && program[o.type.toUpperCase()]),
+        o.defaultValue,
+        o.required
+      );
+      if (o.complete) {
+        opt.complete(o.complete);
+      }
+    }
+  }
 }
 
-function buildRunnerConfig(): RunnerConfig {
-  return {
-    templates: defaultTemplates,
-    cwd: process.cwd(),
-    debug: !!process.env.DEBUG,
-    exec: (command, body) => {
-      const opts = body && body.length > 0 ? {input: body} : {}
-      return shell(command, opts)
-    },
-    // @ts-ignore
-    createPrompter: () => enquirer
-  };
+async function perform(
+  action: CliCmdActionCallback,
+  args: { [k: string]: any },
+  opts: { [k: string]: any },
+  settings?: RunnerSettings,
+) {
+  settings = settings || {};
+  return action(await DefaultContext.create({
+    ...settings,
+    lookup: {localOnly: !opts.global}
+  }), args, opts);
 }
 
 if (require.main === module) {

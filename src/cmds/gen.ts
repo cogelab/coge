@@ -1,18 +1,15 @@
-import {CliCmdDefinition, CmdOptions} from "../types";
-import {generate, GenerateOptions} from "../generate";
+import {CliCmdDefinition, Context} from "../types";
+import {generate} from "../generate";
 import {AttrsResolver} from "../resolvers/attrs";
 
 export const gen: CliCmdDefinition = {
   name: 'gen',
-  description: 'Generate file according to templates',
+  description: 'Generate code in efficient way',
   default: true,
   action,
   arguments: [{
     flags: '<generator>',
-    description: 'Generator to generate',
-  }, {
-    flags: '<action>',
-    description: 'Generator action'
+    description: 'The template used to generate with formula <template:group:[other]>',
   }, {
     flags: '[name]',
     description: 'Specify name attribute'
@@ -21,11 +18,17 @@ export const gen: CliCmdDefinition = {
     flags: '--dry',
     description: 'Perform a dry run. files will be generated but not saved.',
   }, {
+    flags: '-g --global',
+    description: 'Lookup templates from global and local',
+  }, {
     flags: '-f --force',
     description: 'Overwrite files that already exist without confirmation',
   }, {
-    flags: '-n --name <name>',
-    description: 'Simplified definition of `name` attribute ',
+    flags: '--name <name>',
+    description: 'Simplified definition of `name` attribute',
+  }, {
+    flags: '--group <group>',
+    description: 'Simplified definition of `group` attribute ',
   }, {
     flags: '-D --data <var>=<value>',
     description: 'Set data <var> to <value>',
@@ -33,9 +36,11 @@ export const gen: CliCmdDefinition = {
   }]
 }
 
-async function action({conf, opts, logger}: CmdOptions) {
-  const {data, ...others} = opts;
-  others.attrs = AttrsResolver.resolve(data);
-  return await generate(<GenerateOptions>others, conf, logger);
+async function action(context: Context, args: { [p: string]: any }, opts: { [p: string]: any }) {
+  const {generator} = args;
+  const {group} = opts;
+  const name = opts.name || args.name;
+  opts.attrs = Object.assign({name, group}, AttrsResolver.resolve(opts.data));
+  return await generate(context, generator, opts);
 }
 

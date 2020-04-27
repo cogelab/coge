@@ -1,8 +1,9 @@
-import {context} from '../context';
+import {buildContext} from '../rendering';
+import {MockContext} from "./mocks/context";
 
 describe('context', () => {
   it('should populate with capitalized keys', () => {
-    expect(context({ name: 'foobar' })).toMatchSnapshot()
+    expect(buildContext({name: 'foobar'})).toMatchSnapshot()
   })
   it('allows helpers to be initialized with current context', () => {
     const helpers = (args, context) => ({
@@ -10,13 +11,13 @@ describe('context', () => {
       testCtx: () => context,
     })
     const locals = {}
-    const config = {
+    const context = new MockContext({
       helpers,
-    }
-    const ctx = context(locals, config)
+    });
+    const ctx = buildContext(locals, context)
     expect(typeof ctx.h.testArgs).toBe('function')
     expect(typeof ctx.h.testCtx).toBe('function')
     expect(ctx.h.testArgs()).toBe(locals)
-    expect(ctx.h.testCtx()).toBe(config)
+    expect(ctx.h.testCtx()).toBe(context)
   })
 })

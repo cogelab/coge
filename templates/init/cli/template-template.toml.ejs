@@ -1,0 +1,10 @@
+---
+to: templates/template-template/cli/template.toml.ejs
+---
+---
+to: templates/template-<%%= name %>/<%%= group || 'cli' %>/template.toml
+---
+[[params]]
+type = "input"
+name = "message"
+message = "What's your message?"

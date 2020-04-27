@@ -1,30 +1,30 @@
 import * as path from 'path'
-import {configLookup, FileResolver, reversePathsToWalk} from '../resolvers/file'
+import {lookup, FileResolver, reversePathsToWalk} from '../resolvers/file'
 
 const sep = path.sep
 describe('resolver/file', () => {
   describe(`file lookup with separator '${sep}'`, () => {
     if (process.platform !== 'win32') {
       it('sanitizes bad "from" path', () => {
-        const p = configLookup('.myconfig', 'foo').find(f =>
+        const p = lookup('.myconfig', 'foo').find(f =>
           f.match(/foo\/\.myconfig/),
         )
         expect(p).toBeDefined()
       })
 
       it('looks up configuration upwards', () => {
-        expect(configLookup('.myconfig', '/')).toEqual(['/.myconfig'])
-        expect(configLookup('.myconfig', '/one')).toEqual([
+        expect(lookup('.myconfig', '/')).toEqual(['/.myconfig'])
+        expect(lookup('.myconfig', '/one')).toEqual([
           '/one/.myconfig',
           '/.myconfig',
         ])
-        expect(configLookup('.myconfig', '/one/one/one')).toEqual([
+        expect(lookup('.myconfig', '/one/one/one')).toEqual([
           '/one/one/one/.myconfig',
           '/one/one/.myconfig',
           '/one/.myconfig',
           '/.myconfig',
         ])
-        expect(configLookup('.myconfig', '/users/foo/bar/baz')).toEqual([
+        expect(lookup('.myconfig', '/users/foo/bar/baz')).toEqual([
           '/users/foo/bar/baz/.myconfig',
           '/users/foo/bar/.myconfig',
           '/users/foo/.myconfig',
@@ -34,13 +34,13 @@ describe('resolver/file', () => {
       })
     }
     it('looks up windows folders', () => {
-      expect(configLookup('.myconfig', 'C:\\foo\\bar\\baz', path.win32)).toEqual([
+      expect(lookup('.myconfig', 'C:\\foo\\bar\\baz', path.win32)).toEqual([
         'C:\\foo\\bar\\baz\\.myconfig',
         'C:\\foo\\bar\\.myconfig',
         'C:\\foo\\.myconfig',
         'C:\\.myconfig',
       ])
-      expect(configLookup('.myconfig', 'C:\\', path.win32)).toEqual([
+      expect(lookup('.myconfig', 'C:\\', path.win32)).toEqual([
         'C:\\.myconfig',
       ])
     })

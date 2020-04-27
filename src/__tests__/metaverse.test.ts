@@ -1,41 +1,22 @@
-import {createLogger} from "./support";
-import {CliOptions} from "../types";
-import {shell} from "../utils";
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import * as dirCompare from 'dir-compare';
 
-const path = require('path')
-const dirCompare = require('dir-compare')
+import {RunnerSettings} from "../types";
+import {cli} from '../cli'
+import {failPrompt, preparedPrompt} from "./support";
 
 const opts = {compareContent: true}
-const fs = require('fs-extra')
-const enquirer = require('enquirer')
-const {cli} = require('../cli')
 
-const logger = createLogger();
-const failPrompt = () => {
-  throw new Error('set up prompt in testing')
-}
-
-jest.mock('enquirer', () => ({
-  prompt: null,
-}))
 
 const SKIP_ON_WINDOWS = process.platform === 'win32' ? ['shell'] : [];
 
 const dir = m => path.join(__dirname, 'metaverse', m);
-const run = async (argv: any[], options: CliOptions) => cli(['node', 'coge', ...argv], options);
+const run = async (argv: any[], settings: RunnerSettings) => cli(['node', 'coge', ...argv], settings);
 const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
   const metaDir = dir(folder)
   console.log('metaverse test in:', metaDir)
-  const config = {
-    templates: '_templates',
-    cwd: metaDir,
-    exec: (action, body) => {
-      const opts = body && body.length > 0 ? {input: body} : {}
-      return shell(action, opts)
-    },
-    logger,
-    createPrompter: () => require('enquirer'),
-  }
+  const settings = {cwd: metaDir}
   // await fs.remove(path.join(metaDir, 'given'))
   console.log('before', fs.readdirSync(metaDir))
   for (let cmd of cmds) {
@@ -49,17 +30,17 @@ const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
       continue
     }
 
-    enquirer.prompt = failPrompt
+    let prompt = failPrompt;
     if (promptResponse) {
       const last = cmd[cmd.length - 1]
       if (typeof last === 'object') {
         cmd = cmd.slice(0, cmd.length - 1)
-        enquirer.prompt = () => Promise.resolve({...promptResponse, ...last})
+        prompt = preparedPrompt({...promptResponse, ...last})
       } else {
-        enquirer.prompt = () => Promise.resolve(promptResponse)
+        prompt = preparedPrompt(promptResponse)
       }
     }
-    const res = await run(cmd, config)
+    const res = await run(cmd, {prompt, ...settings})
     res.actions.forEach(a => {
       a.timing = -1
       a.subject = a.subject.replace(/.*coge\/src/, '')
@@ -73,7 +54,7 @@ const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
     [expectedDir]: fs.readdirSync(expectedDir),
   })
   const res = dirCompare.compareSync(givenDir, expectedDir, opts)
-  res.diffSet = res.diffSet.filter(d => d.state !== 'equal')
+  res.diffSet = res.diffSet?.filter(d => d.state !== 'equal')
   if (!res.same) {
     console.log(res)
   }
@@ -85,62 +66,55 @@ describe.only('metaverse', () => {
     fs.removeSync(dir('coge-extension/given'));
     fs.removeSync(dir('coge-templates/given'));
   })
-  beforeEach(() => {
-    enquirer.prompt = failPrompt
-  })
-  metaverse('coge-extension', [['coge-js', 'new']], {overwrite: true})
+  metaverse('coge-extension', [['coge-js:new']], {overwrite: true})
   metaverse(
     'coge-templates',
     [
-      ['init', 'self'],
-      ['overwrite-yes', 'base'],
-      ['overwrite-yes', 'over'],
-      ['overwrite-no', 'base'],
-      ['overwrite-no', 'over', {overwrite: false}],
-      ['mailer', 'new'],
-      ['worker', 'new', '--name', 'foo'],
-      ['shell', 'new', '--name', 'foo'],
-      ['inflection', 'new', '--name', 'person'],
-      ['conditional-rendering', 'new', '-D', 'notGiven'],
-      ['add-unless-exists', 'new', '-D', 'message=foo'],
+      ['init:self'],
+      ['overwrite-yes:base'],
+      ['overwrite-yes:over'],
+      ['overwrite-no:base'],
+      ['overwrite-no:over', {overwrite: 'no'}],
+      ['mailer:new'],
+      ['worker:new', '--name', 'foo'],
+      ['shell:new', '--name', 'foo'],
+      ['inflection:new', '--name', 'person'],
+      ['conditional-rendering:new', '-D', 'notGiven'],
+      ['add-unless-exists:new', '-D', 'message=foo'],
       [
-        'cli-prefill-prompt-vars',
-        'new',
+        'cli-prefill-prompt-vars:new',
         '-D', 'message-from-cli=hello-from-cli',
       ],
-      ['cli-prefill-prompt-vars', 'name-is-special', 'foobar'],
+      ['cli-prefill-prompt-vars:name-is-special', 'foobar'],
       [
-        'cli-prefill-prompt-vars',
-        'falsy-values-are-ok',
+        'cli-prefill-prompt-vars:falsy-values-are-ok',
         'foobar',
         '-D', 'include_something=false',
       ],
-      ['recursive-prompt', 'new'],
-      ['positional-name', 'new', 'acmecorp'],
-      ['existing-params', 'new', '-D', 'email=premade-email@foobar.com'],
+      ['recursive-prompt:new'],
+      ['positional-name:new', 'acmecorp'],
+      ['existing-params:new', '-D', 'email=premade-email@foobar.com'],
       [
-        'existing-params',
-        'new-params-alias',
+        'existing-params:new-params-alias',
         '-D', 'email=premade-email@foobar.com',
       ],
       [
-        'index-js-existing-params',
-        'new',
+        'index-js-existing-params:new',
         '-D', 'email=premade-email@foobar.com',
       ],
       [
-        'index-js-existing-params',
-        'new-params-alias',
+        'index-js-existing-params:new-params-alias',
         '-D', 'email=premade-email@foobar.com',
       ],
-    ], // this is all of the responses enquirer gives out from _all_ tests, ever.
+    ],
+    // this is all of the responses enquirer gives out from _all_ tests, ever.
     // it's best to just keep it that way to be simple, and each prompt-dealing test
     // has its own set of uniquely named variables.
     {
       // generic for all tests
       name: 'message',
       message: 'foo',
-      overwrite: true,
+      overwrite: 'yes',
 
       // recursive-prompt
       email: 'some-email@foobar.com',

@@ -1,53 +1,57 @@
 import path = require('path');
 import fs = require('fs-extra');
-import {Prompter} from './types'
+import {Prompter, TemplateEntry} from './types'
 
-interface InteractionParams {
-  params(opts: { args }): Promise<any>;
+interface Interaction {
+  params?: (opts: {context: Record<string, any>})=> Promise<any>;
+  prompt?: (opts: {prompter: Prompter<any, any>, context: Record<string, any>}) => Promise<any>;
 }
-
-interface InteractionPrompt {
-  prompt(opts: { prompter, inquirer, args }): Promise<any>;
-}
-
-type InteractionOptions = { type: string, name: string, message: string }[];
-
-// type Interaction = InteractionParams | InteractionPrompt | InteractionOptions;
 
 const InteractionFiles = ['prompt.js', 'index.js'];
+
 export async function prompt<Q, T>(
-  createPrompter: () => Prompter<Q, T>,
-  folder: string,
-  opts: Record<string, any>,
+  prompter: Prompter<any, any>,
+  template: TemplateEntry,
+  context?: Record<string, any>,
 ): Promise<T | object> {
-  const file = InteractionFiles
-    .map(f => path.resolve(path.join(folder, f)))
-    .find(f => fs.existsSync(f));
 
-  const interaction: any = file && await require(file);
+  let {params} = template.config;
+  if (!params) {
+    const file = InteractionFiles
+      .map(f => path.resolve(path.join(template.dir, f)))
+      .find(f => fs.existsSync(f));
 
-  if (!interaction || (!interaction.params && !interaction.prompt && !interaction.filter)) {
-    return Promise.resolve({})
+    params = file && await require(file);
+
+    if (!params) {
+      return Promise.resolve({})
+    }
   }
+
+  context = context || {};
+  if (Array.isArray(params)) {
+    // prompt _only_ for things we've not seen on the CLI
+    params = params.filter(p =>
+      context![p.name] == null ||
+      context![p.name].length === 0,
+    );
+    return prompter.prompt(params);
+  }
+
+  const interaction = <Interaction>params;
 
   // short circuit without prompter
   // $FlowFixMe
   if (interaction.params) {
-    return interaction.params({args: opts});
+    return interaction.params({context});
   }
 
   // lazy loads prompter
   // everything below requires it
-  const prompter = createPrompter()
   if (interaction.prompt) {
-    return interaction.prompt({prompter, inquirer: prompter, args: opts});
+    return interaction.prompt({prompter, context});
   }
 
-  return prompter.prompt(
-    // prompt _only_ for things we've not seen on the CLI
-    interaction.filter(p =>
-      opts[p.name] == null ||
-      opts[p.name].length === 0,
-    ),
-  )
+  return {};
+
 }

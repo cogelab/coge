@@ -1,0 +1,21 @@
+---
+to: templates/template-template/cli/hello.ejs
+---
+---
+to: templates/template-<%%= name %>/<%%= group || 'cli' %>/hello.js.ejs
+---
+---
+to: app/hello.js
+---
+const hello = ```
+Hello!
+This is your first coge template.
+
+Learn what it can do here:
+
+https://github.com/cogelab/coge
+```
+
+console.log(hello)
+
+
