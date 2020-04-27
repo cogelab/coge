@@ -1,11 +1,12 @@
 import * as path from "path";
 import * as execa from "execa";
 import {Environment, EnvironmentOptions, LookupOptions, PromptModule} from "coge-environment";
-import {Context, Prompter} from "./types";
+import {Context, LogLevel, Prompter} from "./types";
 import {FileResolver} from "./resolvers/file";
 import {FileLoader} from "./loders";
 
 export interface DefaultContextOptions extends EnvironmentOptions {
+  loglevel?: LogLevel;
   cwd?: string;
   lookup?: Partial<LookupOptions> | boolean;
   prompt?: PromptModule;
@@ -22,6 +23,7 @@ const resolver = new FileResolver('.coge.js', FileLoader);
 export class DefaultContext implements Context {
   cwd: string;
   env: Environment;
+  loglevel: LogLevel;
 
   static async create();
   static async create(env: Environment);
@@ -44,6 +46,8 @@ export class DefaultContext implements Context {
 
     const {prompt} = opts;
     this.env = env || Environment.createEnv({prompt});
+
+    this.loglevel = opts.loglevel || 'info';
 
     Object.assign(this.logger.colors, LogColors());
 

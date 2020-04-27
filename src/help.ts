@@ -2,7 +2,7 @@ import {Environment} from "coge-environment";
 
 import {NoTemplates} from "./instructions";
 
-export function printHelp(env: Environment) {
+export function printAvailableTemplates(env: Environment) {
   const {adapter: {logger}} = env;
   if (env.namespaces().length) {
     logger.log('Available Templates:\n');
@@ -12,23 +12,25 @@ export function printHelp(env: Environment) {
   }
 }
 
-export function availableTemplates(env: Environment) {
-  const templates = Object.keys(env.getTemplates()).reduce((namesByTemplate, template) => {
-    const parts = template.split(':');
-    const templateName = <string>parts.shift();
+export function availableTemplates(env: Environment, prefix?: string) {
+  const templates = Object.keys(env.getTemplates())
+    .filter(name => prefix ? name.startsWith(prefix) : true)
+    .reduce((namesByTemplate, template) => {
+      const parts = template.split(':');
+      const templateName = <string>parts.shift();
 
-    // If first time we found this template, prepare to save all its sub-templates
-    if (!namesByTemplate[templateName]) {
-      namesByTemplate[templateName] = [];
-    }
+      // If first time we found this template, prepare to save all its sub-templates
+      if (!namesByTemplate[templateName]) {
+        namesByTemplate[templateName] = [];
+      }
 
-    // If sub-template (!== app), save it
-    if (parts[0] !== 'app') {
-      namesByTemplate[templateName].push(parts.join(':'));
-    }
+      // If sub-template (!== app), save it
+      if (parts[0] !== 'app') {
+        namesByTemplate[templateName].push(parts.join(':'));
+      }
 
-    return namesByTemplate;
-  }, {});
+      return namesByTemplate;
+    }, {});
 
   if (Object.keys(templates).length === 0) {
     return '  Couldn\'t find any templates, did you install any?' // 'Troubleshoot issues by running\n\n  $ coge doctor';

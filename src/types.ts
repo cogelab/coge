@@ -8,6 +8,8 @@ type CliCompleteFn = () => Promise<string[]>;
 
 export type CliCmdActionCallback = (context: Context, args: { [p: string]: any }, opts: { [p: string]: any }) => Promise<any>;
 
+export type LogLevel = 'info' | 'debug';
+
 export interface CliCmdArgument {
   flags: string;
   description: string;
@@ -38,15 +40,6 @@ export interface CliCmdDefinition {
   action: CliCmdActionCallback;
 }
 
-// export interface Logger {
-//   ok: (msg: string) => void
-//   notice: (msg: string) => void
-//   warn: (msg: string) => void
-//   err: (msg: string) => void
-//   log: (msg: string) => void
-//   colorful: (msg: string) => void
-// }
-
 export interface Loader {
   exists: (file: string) => Promise<boolean>;
   load: (file: string) => Promise<Record<string, any>>;
@@ -75,6 +68,7 @@ export interface TemplateHelpersBuilder {
 export interface Context extends Record<string, any> {
   cwd: string;
   env: Environment;
+  loglevel?: LogLevel;
   helpers?: TemplateHelpersBuilder | Record<string, any>;
 }
 

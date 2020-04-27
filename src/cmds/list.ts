@@ -3,6 +3,7 @@ import {availableTemplates} from "../help";
 
 export const list: CliCmdDefinition = {
   name: 'list',
+  alias: 'ls',
   description: 'List available templates',
   action
 }

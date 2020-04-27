@@ -4,10 +4,17 @@ import * as Program from "caporal/lib/program";
 import values from "@tiopkg/utils/object/values";
 
 import * as commands from "./cmds";
-import {CliCmdActionCallback, CliCmdDefinition, RunnerSettings} from "./types";
+import {CliCmdActionCallback, CliCmdDefinition, LogLevel, RunnerSettings} from "./types";
 import {DefaultContext} from "./context";
 
 const pkg = require("../package.json");
+
+interface PerformOptions {
+  args: { [k: string]: any };
+  opts: { [k: string]: any };
+  loglevel: LogLevel;
+  settings?: RunnerSettings;
+}
 
 export async function cli(argv: any[], settings?: RunnerSettings) {
   return createProgram(argv, settings);
@@ -22,7 +29,12 @@ async function createProgram(argv: any[], settings?: RunnerSettings) {
 
 function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: RunnerSettings) {
   const cmd = def.default ? program.description(def.description) : program.command(def.name, def.description);
-  cmd.action((args, opts) => perform(def.action, args, opts, settings));
+  if (def.alias) {
+    cmd.alias(def.alias);
+  }
+  cmd.action((args, opts, logger) => {
+    return perform(def.action, {settings, args, opts, loglevel: logger.transports?.caporal?.level || 'info'})
+  });
 
   if (def.help) {
     cmd.help(def.help);
@@ -53,13 +65,12 @@ function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: Run
 
 async function perform(
   action: CliCmdActionCallback,
-  args: { [k: string]: any },
-  opts: { [k: string]: any },
-  settings?: RunnerSettings,
+  {args, opts, loglevel, settings}: PerformOptions,
 ) {
   settings = settings || {};
   return action(await DefaultContext.create({
     ...settings,
+    loglevel,
     lookup: {localOnly: !opts.global}
   }), args, opts);
 }

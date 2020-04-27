@@ -1,5 +1,6 @@
 import {Environment} from "coge-environment";
 import chalk from "chalk";
+import {availableTemplates} from "./help";
 
 export const NoTemplates = () => `No templates found.
 
@@ -18,11 +19,11 @@ $ coge coco:gen
 See https://github.com/cogelab/coge for more.
 `
 
-export const TemplateNotFound = (env: Environment, name: string, hint: string) => `
+export const TemplateNotFound = (env: Environment, name: string, module: string) => `
 Help is on the way:
 
   1. You can see available generators via ${chalk.yellow('npm search coge-template')}.
-     Install them with ${chalk.yellow('npm install ' + hint)}.
+     Install them with ${chalk.yellow('npm install ' + module)}.
 
   2. You can try:
      1) ${chalk.yellow('coge init')} to initialize your project, and
@@ -32,3 +33,7 @@ To see all your installed templates run ${chalk.yellow('coge list')}.
 
 If ${chalk.yellow('coge list')} cannot find the template, run ${chalk.yellow('coge doctor')} to troubleshoot your system.
 `
+
+export const AvailableTemplatesForModule = (env: Environment, name: string, module: string) => `
+Available Templates in ${chalk.yellow(module)}:
+${availableTemplates(env, name)}`

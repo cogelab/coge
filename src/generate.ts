@@ -11,8 +11,8 @@ import {loadTemplateConfig} from "./config";
 import {Context, Op, OpSession, TemplateEntry} from "./types";
 
 import {prompt} from "./prompt";
-import {TemplateNotFound} from "./instructions";
-import {printHelp} from "./help";
+import {AvailableTemplatesForModule, TemplateNotFound} from "./instructions";
+import {availableTemplates, printAvailableTemplates} from "./help";
 
 export interface GenerateOptions {
   global?: boolean;
@@ -21,37 +21,36 @@ export interface GenerateOptions {
   attrs?: Record<string, any>;
 }
 
-export async function generate(context: Context, generator: string, opts: GenerateOptions) {
+export async function generate(context: Context, namespace: string, opts: GenerateOptions) {
   const {logger} = context.env.adapter;
   try {
-    const actions = await doGenerate(context, generator, opts);
+    const actions = await doGenerate(context, namespace, opts);
     return {success: true, actions, time: 0}
   } catch (err) {
     logger.log(chalk.red(err.toString()));
-    // if (err instanceof ErrorWithInstruction) {
-    //   logger.log(err.instruction);
-    // }
-    // if (resolvedConfig.debug) {
+    if (err instanceof ErrorWithInstruction) {
+      logger.log(err.instruction);
+    }
+    if (context.loglevel === 'debug') {
       logger.log('')
       logger.log('-------------------')
       logger.log(err.stack)
       logger.log('-------------------')
-    // }
-    // printHelp(context.env);
+    }
     return {success: false, actions: [], time: 0};
   }
 }
 
-async function doGenerate(context: Context, generator: string, opts: GenerateOptions) {
+async function doGenerate(context: Context, namespace: string, opts: GenerateOptions) {
   const {cwd, env} = context;
   const {logger} = env.adapter;
 
   opts.dry && logger.log('(dry mode)');
-  if (!generator) {
+  if (!namespace) {
     throw new Error('Please specify a template.');
   }
 
-  const entry = createTemplateEntry(env, generator);
+  const entry = createTemplateEntry(env, namespace);
   const attrs = assign({cwd}, opts.attrs);
   const answers = await prompt(env.adapter, entry, attrs);
   const locals = Object.assign({}, answers, attrs, {cwd});
@@ -73,27 +72,36 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
     }
   }
   if (messages.length > 0) {
-    logger.colorful(`${generator}:\n${messages.join('\n')}`);
+    logger.colorful(`${namespace}:\n${messages.join('\n')}`);
   }
   return result;
 }
 
 function createTemplateEntry(env: Environment, namespace: string): TemplateEntry {
+  let templateModule = ''
   let pattern;
   let template = env.get(namespace);
   if (!template) {
     const parts = namespace.split(':');
+    templateModule = parts[0];
     if (parts.length >= 2) {
       pattern = parts.pop();
       template = env.get(parts.join(':'));
     }
   }
   if (!template) {
+    const installed = !!env.namespaces().find(n => n.startsWith(templateModule));
     const name = getTemplateName(namespace);
     const hint = getTemplateHint(name);
-    throw new ErrorWithInstruction(
-      `You don't seem to have a template with the name '${hint}' installed.`, TemplateNotFound(env, name, hint)
-    );
+    if (installed) {
+      throw new ErrorWithInstruction(
+        `Template '${hint}' doesn\'t support namespace '${namespace}'.`, AvailableTemplatesForModule(env, name, hint)
+      );
+    } else {
+      throw new ErrorWithInstruction(
+        `You don't seem to have a template with the name '${hint}' installed.`, TemplateNotFound(env, name, hint)
+      );
+    }
   }
 
   const dir = path.dirname(template.resolved);
