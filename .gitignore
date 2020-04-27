@@ -7,3 +7,4 @@ npm-debug.log
 lib
 src/__tests__/metaverse/**/given/
 standalone
+temp
