@@ -8,12 +8,12 @@ import {OpSession} from "../types";
 
 export async function inject(
   {context: {cwd, env}}: OpSession,
-  group: RenderedAction,
+  action: RenderedAction,
   opts: GenerateOptions,
 ): Promise<OpResult> {
   const {
     attributes: {to, inject},
-  } = group;
+  } = action;
   const {logger} = env.adapter;
 
   const result = createResult('inject', to)
@@ -32,7 +32,7 @@ export async function inject(
   }
 
   const content = (await fs.readFile(absTo)).toString()
-  const injectResult = injector(group, content)
+  const injectResult = injector(action, content)
 
   if (!opts.dry) {
     await fs.writeFile(absTo, injectResult)
