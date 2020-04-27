@@ -15,7 +15,7 @@ export async function shell(
     if (!opts.dry) {
       await exec(sh, body)
     }
-    logger.ok(`       shell: ${sh}`)
+    logger.status('shell', sh);
 
     return result('executed')
   }

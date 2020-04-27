@@ -53,25 +53,23 @@ Initialize `coge` in your project (do this once per project):
 
 ```
 $ cd your-project
-$ coge generator init
+$ coge init
 ```
 
 Build your first generator, called `mygen`:
 
 ```
-$ coge generator new mygen
+$ coge template:new mygen
 
-Loaded templates: templates
-  generated: templates/mygen/new/hello.ejs.t
+  create: templates/mygen/new/hello.ejs.t
 ```
 
 Now you can use it:
 
 ```
-$ coge mygen gen
+$ coge mygen:gen
 
-Loaded templates: templates
-  generated: app/hello.js
+  create: app/hello.js
 ```
 
 You've generated content into the current working directory in `app/`. To see how is the generator built, look at `templates` (which you should check-in to your project from now on, by the way).
@@ -79,19 +77,17 @@ You've generated content into the current working directory in `app/`. To see ho
 You can build a generator that uses an interactive prompt to fill in a variable:
 
 ```
-$ coge generator cli mygen
+$ coge template:cli mygen
 
-Loaded templates: templates
-  generated: templates/mygen/cli/hello.ejs.t
-  generated: templates/mygen/cli/prompt.js
+  create: templates/mygen/cli/hello.ejs.t
+  create: templates/mygen/cli/prompt.js
 ```
 
 Done! Now let's use `mygen`:
 
 ```
-$ coge mygen cli
+$ coge mygen:cli
 ? What's your message? hello
 
-Loaded templates: templates
-  generated: app/hello.js
+  create: app/hello.js
 ```
