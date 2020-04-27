@@ -73,8 +73,7 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
     }
   }
   if (messages.length > 0) {
-    // logger.colorful(`${generator}:\n${messages.join('\n')}`);
-    logger.ok(`${generator}:\n${messages.join('\n')}`);
+    logger.colorful(`${generator}:\n${messages.join('\n')}`);
   }
   return result;
 }
