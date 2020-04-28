@@ -21,6 +21,7 @@
 ✅ Injecting into existing files  
 ✅ Running shell commands  
 ✅ Super fast, constantly optimized for speed  
+✅ __Support global and local generator module with `gen-` prefix__  
 ✅ __Support deep attribute options with CLI arguments__  
 ✅ __Automatic attribute value type inference__  
 
@@ -59,9 +60,9 @@ $ coge init
 Build your first generator, called `mygen`:
 
 ```
-$ coge template:new mygen
+$ coge generator:new mygen
 
-  create: templates/mygen/new/hello.ejs.t
+  create: generators/mygen/new/hello.ejs.t
 ```
 
 Now you can use it:
@@ -72,15 +73,15 @@ $ coge mygen:gen
   create: app/hello.js
 ```
 
-You've generated content into the current working directory in `app/`. To see how is the generator built, look at `templates` (which you should check-in to your project from now on, by the way).
+You've generated content into the current working directory in `app/`. To see how is the generator built, look at `generators` (which you should check-in to your project from now on, by the way).
 
 You can build a generator that uses an interactive prompt to fill in a variable:
 
 ```
-$ coge template:prompt mygen
+$ coge generator:prompt mygen
 
-  create: templates/mygen/prompt/hello.ejs.t
-  create: templates/mygen/prompt/prompt.js
+  create: generators/mygen/prompt/hello.ejs.t
+  create: generators/mygen/prompt/prompt.js
 ```
 
 Done! Now let's use `mygen`:
