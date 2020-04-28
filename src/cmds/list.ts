@@ -1,5 +1,5 @@
 import {CliCmdDefinition, Context} from "../types";
-import {availableTemplates} from "../help";
+import {availableGenerators} from "../help";
 
 export const list: CliCmdDefinition = {
   name: 'list',
@@ -13,6 +13,6 @@ async function action(context: Context) {
   const {adapter: {logger}} = env;
 
   logger.log('Available Templates:\n')
-  logger.log(availableTemplates(env))
+  logger.log(availableGenerators(env))
 }
 

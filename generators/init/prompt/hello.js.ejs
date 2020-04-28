@@ -1,8 +1,8 @@
 ---
-to: templates/template-template/<%= folder %>/hello.ejs
+to: generators/gen-generator/<%= folder %>/hello.ejs
 ---
 ---
-to: templates/template-<%%= name %>/<%%= group || 'gen' %>/hello.js.ejs
+to: generators/gen-<%%= name %>/<%%= group || folder %>/hello.js.ejs
 ---
 ---
 to: app/hello.js
@@ -17,3 +17,5 @@ https://github.com/cogelab/coge
 ```
 
 console.log(hello)
+
+

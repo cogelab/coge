@@ -7,12 +7,11 @@ import {resolveOps} from "./ops";
 import {ErrorWithInstruction} from "./errors";
 import {Environment} from "coge-environment";
 import {assign} from "./utils";
-import {loadTemplateConfig} from "./config";
-import {Context, Op, OpSession, TemplateEntry} from "./types";
+import {loadTemplateSpecs} from "./specs";
+import {Context, Op, OpSession, GeneratorEntry} from "./types";
 
 import {prompt} from "./prompt";
-import {AvailableTemplatesForModule, TemplateNotFound} from "./instructions";
-import {availableTemplates, printAvailableTemplates} from "./help";
+import {AvailableTemplatesForGenerator, GeneratorNotFound} from "./instructions";
 
 export interface GenerateOptions {
   global?: boolean;
@@ -21,10 +20,10 @@ export interface GenerateOptions {
   attrs?: Record<string, any>;
 }
 
-export async function generate(context: Context, namespace: string, opts: GenerateOptions) {
+export async function generate(context: Context, generator: string, opts: GenerateOptions) {
   const {logger} = context.env.adapter;
   try {
-    const actions = await doGenerate(context, namespace, opts);
+    const actions = await doGenerate(context, generator, opts);
     return {success: true, actions, time: 0}
   } catch (err) {
     logger.log(chalk.red(err.toString()));
@@ -41,16 +40,16 @@ export async function generate(context: Context, namespace: string, opts: Genera
   }
 }
 
-async function doGenerate(context: Context, namespace: string, opts: GenerateOptions) {
+async function doGenerate(context: Context, generator: string, opts: GenerateOptions) {
   const {cwd, env} = context;
   const {logger} = env.adapter;
 
   opts.dry && logger.log('(dry mode)');
-  if (!namespace) {
-    throw new Error('Please specify a template.');
+  if (!generator) {
+    throw new Error('Please specify a generator.');
   }
 
-  const entry = createTemplateEntry(env, namespace);
+  const entry = createTemplateEntry(env, generator);
   const attrs = assign({cwd}, opts.attrs);
   const answers = await prompt(env.adapter, entry, attrs);
   const locals = Object.assign({}, answers, attrs, {cwd});
@@ -72,41 +71,42 @@ async function doGenerate(context: Context, namespace: string, opts: GenerateOpt
     }
   }
   if (messages.length > 0) {
-    logger.colorful(`${namespace}:\n${messages.join('\n')}`);
+    logger.colorful(`${generator}:\n${messages.join('\n')}`);
   }
   return result;
 }
 
-function createTemplateEntry(env: Environment, namespace: string): TemplateEntry {
-  let templateModule = ''
+function createTemplateEntry(env: Environment, namespace: string): GeneratorEntry {
+  let generatorModule = ''
   let pattern;
-  let template = env.get(namespace);
-  if (!template) {
+  let generator = env.get(namespace);
+  if (!generator) {
     const parts = namespace.split(':');
-    templateModule = parts[0];
+    generatorModule = parts[0];
     if (parts.length >= 2) {
       pattern = parts.pop();
-      template = env.get(parts.join(':'));
+      generator = env.get(parts.join(':'));
     }
   }
-  if (!template) {
-    const installed = !!env.namespaces().find(n => n.startsWith(templateModule));
+  if (!generator) {
+    const installed = !!env.namespaces().find(n => n.startsWith(generatorModule));
     const name = getTemplateName(namespace);
     const hint = getTemplateHint(name);
     if (installed) {
       throw new ErrorWithInstruction(
-        `Template '${hint}' doesn\'t support namespace '${namespace}'.`, AvailableTemplatesForModule(env, name, hint)
+        `Generator '${hint}' doesn\'t have an template with namespace '${namespace}'.`,
+        AvailableTemplatesForGenerator(env, name, hint)
       );
     } else {
       throw new ErrorWithInstruction(
-        `You don't seem to have a template with the name '${hint}' installed.`, TemplateNotFound(env, name, hint)
+        `You don't seem to have a generator with the name '${hint}' installed.`, GeneratorNotFound(env, name, hint)
       );
     }
   }
 
-  const dir = path.dirname(template.resolved);
-  const config = loadTemplateConfig(template.resolved);
-  return {template, config, dir, pattern};
+  const dir = path.dirname(generator.resolved);
+  const specs = loadTemplateSpecs(generator.resolved);
+  return {generator, specs, dir, pattern};
 }
 
 function getTemplateName(namespace: string) {
@@ -116,7 +116,7 @@ function getTemplateName(namespace: string) {
 function getTemplateHint(namespace) {
   if (isScoped(namespace)) {
     const splitName = namespace.split('/');
-    return `${splitName[0]}/template-${splitName[1]}`;
+    return `${splitName[0]}/gen-${splitName[1]}`;
   }
-  return `template-${namespace}`;
+  return `gen-${namespace}`;
 }

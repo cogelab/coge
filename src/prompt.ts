@@ -1,6 +1,6 @@
 import path = require('path');
 import fs = require('fs-extra');
-import {Prompter, TemplateEntry} from './types'
+import {Prompter, GeneratorEntry} from './types'
 
 interface Interaction {
   params?: (opts: {context: Record<string, any>})=> Promise<any>;
@@ -11,11 +11,11 @@ const InteractionFiles = ['prompt.js', 'index.js'];
 
 export async function prompt<Q, T>(
   prompter: Prompter<any, any>,
-  template: TemplateEntry,
+  template: GeneratorEntry,
   context?: Record<string, any>,
 ): Promise<T | object> {
 
-  let {params} = template.config;
+  let {params} = template.specs;
   if (!params) {
     const file = InteractionFiles
       .map(f => path.resolve(path.join(template.dir, f)))

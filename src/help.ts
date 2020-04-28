@@ -1,43 +1,42 @@
 import {Environment} from "coge-environment";
+import {NoGenerators} from "./instructions";
 
-import {NoTemplates} from "./instructions";
-
-export function printAvailableTemplates(env: Environment) {
+export function printAvailableGenerators(env: Environment) {
   const {adapter: {logger}} = env;
   if (env.namespaces().length) {
-    logger.log('Available Templates:\n');
-    logger.log(availableTemplates(env));
+    logger.log('Available Generators:\n');
+    logger.log(availableGenerators(env));
   } else {
-    logger.log(NoTemplates());
+    logger.log(NoGenerators());
   }
 }
 
-export function availableTemplates(env: Environment, prefix?: string) {
-  const templates = Object.keys(env.getTemplates())
+export function availableGenerators(env: Environment, prefix?: string) {
+  const generators = Object.keys(env.getGenerators())
     .filter(name => prefix ? name.startsWith(prefix) : true)
-    .reduce((namesByTemplate, template) => {
+    .reduce((namesByGenerator, template) => {
       const parts = template.split(':');
       const templateName = <string>parts.shift();
 
       // If first time we found this template, prepare to save all its sub-templates
-      if (!namesByTemplate[templateName]) {
-        namesByTemplate[templateName] = [];
+      if (!namesByGenerator[templateName]) {
+        namesByGenerator[templateName] = [];
       }
 
       // If sub-template (!== app), save it
       if (parts[0] !== 'app') {
-        namesByTemplate[templateName].push(parts.join(':'));
+        namesByGenerator[templateName].push(parts.join(':'));
       }
 
-      return namesByTemplate;
+      return namesByGenerator;
     }, {});
 
-  if (Object.keys(templates).length === 0) {
-    return '  Couldn\'t find any templates, did you install any?' // 'Troubleshoot issues by running\n\n  $ coge doctor';
+  if (Object.keys(generators).length === 0) {
+    return '  Couldn\'t find any generator, did you install any?' // 'Troubleshoot issues by running\n\n  $ coge doctor';
   }
 
-  return Object.keys(templates).map(template => {
-    const subTemplates = templates[template].map(subTemplate => `    ${subTemplate}`).join('\n');
-    return `  ${template}${subTemplates.trim() ? '\n' + subTemplates : ''}`;
+  return Object.keys(generators).map(generator => {
+    const groups = generators[generator].map(group => `    ${group}`).join('\n');
+    return `  ${generator}${groups.trim() ? '\n' + groups : ''}`;
   }).join('\n');
 }

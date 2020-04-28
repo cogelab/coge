@@ -64,11 +64,11 @@ const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
 describe.only('metaverse', () => {
   beforeAll(() => {
     fs.removeSync(dir('coge-extension/given'));
-    fs.removeSync(dir('coge-templates/given'));
+    fs.removeSync(dir('coge-generators/given'));
   })
   metaverse('coge-extension', [['coge-js:new']], {overwrite: true})
   metaverse(
-    'coge-templates',
+    'coge-generators',
     [
       ['init:self'],
       ['overwrite-yes:base'],

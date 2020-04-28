@@ -26,7 +26,7 @@
   "files": [
     "bin",
     "lib",
-    "templates"
+    "generators"
   ],
   "bin": {
     "coge": "bin/coge"
@@ -55,7 +55,7 @@
     "@tiopkg/utils": "^2.1.8",
     "caporal": "^1.3.0",
     "change-case": "^4.1.1",
-    "coge-environment": "^0.3.3",
+    "coge-environment": "^0.4.1",
     "cross-spawn": "^7.0.2",
     "debug": "^4.1.1",
     "diff": "^4.0.2",

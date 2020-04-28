@@ -1,4 +1,4 @@
-import {Environment, PromptModule, Template} from "coge-environment";
+import {Environment, PromptModule, Generator} from "coge-environment";
 import {GenerateOptions} from "./generate";
 
 type CliCmdValidatorFn = (str: string) => any;
@@ -72,7 +72,7 @@ export interface Context extends Record<string, any> {
   helpers?: TemplateHelpersBuilder | Record<string, any>;
 }
 
-export interface TemplateConfig {
+export interface TemplateSpecs {
   params?: {
     type?: string;
     name: string;
@@ -82,10 +82,10 @@ export interface TemplateConfig {
   [p: string]: any;
 }
 
-export interface TemplateEntry {
+export interface GeneratorEntry {
+  generator: Generator;
   dir: string;
-  template: Template;
-  config: TemplateConfig;
+  specs: TemplateSpecs;
   pattern?: string;
 }
 

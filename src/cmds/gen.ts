@@ -8,8 +8,8 @@ export const gen: CliCmdDefinition = {
   default: true,
   action,
   arguments: [{
-    flags: '<template>',
-    description: 'The template used to generate with formula <module:group:[pattern]>',
+    flags: '<generator>',
+    description: 'The template used to generate with formula <generator[:group][:pattern]>',
   }, {
     flags: '[name]',
     description: 'Specify name attribute'
@@ -37,10 +37,10 @@ export const gen: CliCmdDefinition = {
 }
 
 async function action(context: Context, args: { [p: string]: any }, opts: { [p: string]: any }) {
-  const {template} = args;
+  const {generator} = args;
   const {group} = opts;
   const name = opts.name || args.name;
   opts.attrs = Object.assign({name, group}, AttrsResolver.resolve(opts.data));
-  return await generate(context, template, opts);
+  return await generate(context, generator, opts);
 }
 

@@ -4,7 +4,7 @@ import fm = require('front-matter');
 import path = require('path');
 import walk = require('ignore-walk');
 
-import {Context, RenderedAction, TemplateEntry} from '../types'
+import {Context, RenderedAction, GeneratorEntry} from '../types'
 import {buildContext} from './context';
 import last from "@tiopkg/utils/array/last";
 
@@ -38,7 +38,7 @@ async function listFiles(dir: string) {
 
 export const render = async (
   context: Context,
-  template: Pick<TemplateEntry, 'dir' | 'pattern'>,
+  template: Pick<GeneratorEntry, 'dir' | 'pattern'>,
   locals?: Record<string, any>,
 ): Promise<RenderedAction[]> => {
   const files = (await listFiles(template.dir))

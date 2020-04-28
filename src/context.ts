@@ -4,6 +4,7 @@ import {Environment, EnvironmentOptions, LookupOptions, PromptModule} from "coge
 import {Context, LogLevel, Prompter} from "./types";
 import {FileResolver} from "./resolvers/file";
 import {FileLoader} from "./loders";
+import toArray from "@tiopkg/utils/array/toArray";
 
 export interface DefaultContextOptions extends EnvironmentOptions {
   loglevel?: LogLevel;
@@ -52,13 +53,11 @@ export class DefaultContext implements Context {
     Object.assign(this.logger.colors, LogColors());
 
     // lookup built-in templates
-    this.env.lookup({localOnly: true, npmPaths: path.resolve(__dirname, '..', 'templates')});
-    this.env.lookup({localOnly: true, packagePaths: path.resolve(__dirname, '..', 'templates')});
+    this.lookupLocal(path.resolve(__dirname, '..'), ['generators']);
 
     // lookup local templates
     if (path.relative(this.cwd, path.resolve(__dirname, '..'))) {
-      this.env.lookup({localOnly: true, npmPaths: path.resolve(this.cwd, 'templates')});
-      this.env.lookup({localOnly: true, packagePaths: path.resolve(this.cwd, 'templates')});
+      this.lookupLocal(this.cwd, ['generators']);
     }
 
     // lookup template-* modules
@@ -83,6 +82,13 @@ export class DefaultContext implements Context {
 
   lookup(options?: Partial<LookupOptions> | boolean) {
     return this.env.lookup(options);
+  }
+
+  lookupLocal(root: string, folders: string | string[]) {
+    toArray(folders).forEach((folder) => {
+      this.env.lookup({localOnly: true, npmPaths: path.resolve(root, folder)});
+      this.env.lookup({localOnly: true, packagePaths: path.resolve(root, folder)});
+    });
   }
 
 }

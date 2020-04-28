@@ -1,7 +1,7 @@
 import fs = require('fs-extra');
 import toml = require('@iarna/toml');
-import {TemplateConfig} from "./types";
+import {TemplateSpecs} from "./types";
 
-export function loadTemplateConfig(file: string): TemplateConfig {
+export function loadTemplateSpecs(file: string): TemplateSpecs {
   return toml.parse(fs.readFileSync(file).toString('utf8'));
 }
