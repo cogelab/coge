@@ -47,16 +47,23 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
 
   const template = loadTemplate(env, generator);
   const attrs = assign({cwd}, opts.attrs);
+
+  // 1. prompt locals
   const answers = await prompt(env.adapter, template, attrs);
+  let locals = Object.assign({}, answers, attrs, {cwd});
 
-  const locals = Object.assign({}, answers, attrs, {cwd});
+  // 2. hook locals
+  if (template.locals) {
+    locals = (await template.locals(locals)) || locals;
+  }
 
-  // lazy loading these dependencies gives a better feel once
-  // a user is exploring coge (not specifying what to execute)
+  // 3. render templates
   const renderedActions = await render(context, template, locals);
   const messages: string[] = [];
   const result: Op[] = [];
   const session: OpSession = {context};
+
+  // 4. perform operations
   for (const action of renderedActions) {
     const {message} = action.attributes
     if (message) {
@@ -70,6 +77,7 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
   if (messages.length > 0) {
     logger.colorful(`${generator}:\n${messages.join('\n')}`);
   }
+
   return result;
 }
 

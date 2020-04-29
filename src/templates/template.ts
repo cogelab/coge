@@ -31,6 +31,7 @@ export interface Template {
   questions?: Record<string, any>[];
   params?: (opts: TemplatePromptOptions) => Promise<any>;
   prompt?: (opts: TemplatePromptOptions) => Promise<any>;
+  locals?: (locals: Record<string, any>) => Promise<Record<string, any> | undefined>;
   filter?: (files: string[], locals: Record<string, any>) => Promise<string[]>
 }
 
