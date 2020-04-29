@@ -132,6 +132,27 @@ Object {
 }
 `;
 
+exports[`metaverse coge-generators: filter:app 1`] = `
+Object {
+  "actions": Array [
+    Object {
+      "status": "generated",
+      "subject": "given/filter-app/foo.txt",
+      "timing": -1,
+      "type": "add",
+    },
+    Object {
+      "status": "generated",
+      "subject": "given/filter-app/LICENSE",
+      "timing": -1,
+      "type": "add",
+    },
+  ],
+  "success": true,
+  "time": 0,
+}
+`;
+
 exports[`metaverse coge-generators: index-js-existing-params:new -D email=premade-email@foobar.com 1`] = `
 Object {
   "actions": Array [

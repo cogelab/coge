@@ -10,9 +10,10 @@ import last from "@tiopkg/utils/array/last";
 import {Template} from "../templates";
 
 const ignores = [
-  'coge.toml',
+  'template.toml',
   'prompt.js',
   'index.js',
+  'main.js',
   '.cogeignore',
   '.DS_Store',
   '.Spotlight-V100',
@@ -42,13 +43,26 @@ export const render = async (
   template: Template,
   locals?: Record<string, any>,
 ): Promise<RenderedAction[]> => {
+  locals = locals || {};
   const info = template._info;
-  const files = (await listFiles(info.dir))
-    .sort((a, b) => a.localeCompare(b))  // TODO: add a test to verify this sort
-    .filter(file => !ignores.find(ig => file.endsWith(ig)))
-    .filter(file => (info.pattern ? file.match(info.pattern) : true));
 
+  // prepare templates
+  let files = (await listFiles(info.dir))
+    .sort((a, b) => a.localeCompare(b))  // TODO: add a test to verify this sort
+    .filter(file => !ignores.find(ig => file.endsWith(ig)));
+
+  if (info.pattern) {
+    files = files.filter(file => file.match(info.pattern));
+  }
+
+  if (template.filter) {
+    files = template.filter(files, locals);
+  }
+
+  // read templates
   const entries = await Promise.all(files.map(file => fs.readFile(file).then(text => ({file, text: text.toString()}))));
+
+  // parse and render templates
   return entries
     .map(({file, text}) => ({file, ...fm<Record<string, any>>(text)}))
     .map(({file, attributes, body}) => ({

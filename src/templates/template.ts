@@ -19,8 +19,6 @@ interface TemplatePromptOptions {
   context: Record<string, any>;
 }
 
-type TemplatePromptFn = (opts: TemplatePromptOptions) => Promise<any>;
-
 interface TemplateCtorOptions extends TemplateInfo {
 }
 
@@ -31,8 +29,9 @@ interface TemplateCtor {
 export interface Template {
   _info: TemplateInfo;
   questions?: Record<string, any>[];
-  params?: TemplatePromptFn;
-  prompt?: TemplatePromptFn;
+  params?: (opts: TemplatePromptOptions) => Promise<any>;
+  prompt?: (opts: TemplatePromptOptions) => Promise<any>;
+  filter?: (files: string[], locals: Record<string, any>) => Promise<string[]>
 }
 
 export function loadTemplate(env: Environment, namespace: string): Template {

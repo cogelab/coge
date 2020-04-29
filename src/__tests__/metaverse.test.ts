@@ -106,6 +106,7 @@ describe.only('metaverse', () => {
         'index-js-existing-params:new-params-alias',
         '-D', 'email=premade-email@foobar.com',
       ],
+      ['filter:app']
     ],
     // this is all of the responses enquirer gives out from _all_ tests, ever.
     // it's best to just keep it that way to be simple, and each prompt-dealing test
@@ -115,6 +116,7 @@ describe.only('metaverse', () => {
       name: 'message',
       message: 'foo',
       overwrite: 'yes',
+      license: 'mit',
 
       // recursive-prompt
       email: 'some-email@foobar.com',
