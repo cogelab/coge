@@ -9,6 +9,8 @@ import {DefaultContext} from "./context";
 
 const pkg = require("../package.json");
 
+const DEBUG_LEVELS = ['debug', 'verbose', 'silly']
+
 interface PerformOptions {
   args: { [k: string]: any };
   opts: { [k: string]: any };
@@ -33,7 +35,7 @@ function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: Run
     cmd.alias(def.alias);
   }
   cmd.action((args, opts, logger) => {
-    const debug = opts.v || opts.verbose;
+    const debug = DEBUG_LEVELS.includes(logger?.transports?.caporal?.level?.toLowerCase());
     return perform(def.action, {settings, args, opts, debug})
   });
 
