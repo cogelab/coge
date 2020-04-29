@@ -22,22 +22,6 @@ const ignores = [
   'Thumbs.db',
 ];
 
-function extractFolder(file: string) {
-  const dir = path.dirname(file);
-  const parts = dir.split(path.sep);
-  return last(parts);
-}
-
-function renderTemplate(tmpl: any, locals?: Record<string, any>, context?: Context, extra?: Record<string, any>) {
-  return typeof tmpl === 'string' ? ejs.render(tmpl, buildContext(locals, context, extra || {})) : tmpl;
-}
-
-async function listFiles(dir: string) {
-  return walk
-    .sync({path: dir, ignoreFiles: ['.cogeignore']})
-    .map(f => path.join(dir, f));
-}
-
 export const render = async (
   context: Context,
   template: Template,
@@ -65,13 +49,32 @@ export const render = async (
   // parse and render templates
   return entries
     .map(({file, text}) => ({file, ...fm<Record<string, any>>(text)}))
-    .map(({file, attributes, body}) => ({
-      file,
-      attributes: Object.entries(attributes).reduce((obj, [key, value]) => ({
-        ...obj,
-        [key]: renderTemplate(value, locals, context, {folder: extractFolder(file)}),
-      }), {}),
-      body: renderTemplate(body, locals, context, {folder: extractFolder(file)}),
-    }));
+    .map(({file, attributes, body}) => {
+      const extra = extractFilePath(info.dir, file);
+      return {
+        file,
+        attributes: Object.entries(attributes).reduce((obj, [key, value]) => ({
+          ...obj,
+          [key]: renderTemplate(value, locals, context, extra),
+        }), {}),
+        body: renderTemplate(body, locals, context, extra),
+      }
+    });
+}
+
+async function listFiles(dir: string) {
+  return walk
+    .sync({path: dir, ignoreFiles: ['.cogeignore']})
+    .map(f => path.join(dir, f));
+}
+
+function extractFilePath(root: string, file: string) {
+  const dir = path.relative(root, path.dirname(file));
+  const folder = last(dir.split(path.sep));
+  return {dir, folder};
+}
+
+function renderTemplate(tmpl: any, locals?: Record<string, any>, context?: Context, extra?: Record<string, any>) {
+  return typeof tmpl === 'string' ? ejs.render(tmpl, buildContext(locals, context, extra || {})) : tmpl;
 }
 
