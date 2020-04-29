@@ -29,6 +29,7 @@
     "generators"
   ],
   "bin": {
+    "co": "bin/coge",
     "coge": "bin/coge"
   },
   "main": "./lib/index.js",
