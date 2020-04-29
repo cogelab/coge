@@ -1,17 +1,13 @@
-import * as path from "path";
 import chalk from 'chalk';
-import * as isScoped from 'is-scoped';
 
 import {render} from "./rendering";
 import {resolveOps} from "./ops";
 import {ErrorWithInstruction} from "./errors";
-import {Environment} from "coge-environment";
 import {assign} from "./utils";
-import {loadTemplateSpecs} from "./specs";
-import {Context, Op, OpSession, GeneratorEntry} from "./types";
+import {Context, Op, OpSession} from "./types";
 
 import {prompt} from "./prompt";
-import {AvailableTemplatesForGenerator, GeneratorNotFound} from "./instructions";
+import {loadTemplate} from "./templates";
 
 export interface GenerateOptions {
   global?: boolean;
@@ -30,7 +26,7 @@ export async function generate(context: Context, generator: string, opts: Genera
     if (err instanceof ErrorWithInstruction) {
       logger.log(err.instruction);
     }
-    if (context.loglevel === 'debug') {
+    if (context.debug) {
       logger.log('')
       logger.log('-------------------')
       logger.log(err.stack)
@@ -49,14 +45,15 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
     throw new Error('Please specify a generator.');
   }
 
-  const entry = createTemplateEntry(env, generator);
+  const template = loadTemplate(env, generator);
   const attrs = assign({cwd}, opts.attrs);
-  const answers = await prompt(env.adapter, entry, attrs);
+  const answers = await prompt(env.adapter, template, attrs);
+
   const locals = Object.assign({}, answers, attrs, {cwd});
 
   // lazy loading these dependencies gives a better feel once
   // a user is exploring coge (not specifying what to execute)
-  const renderedActions = await render(context, entry, locals);
+  const renderedActions = await render(context, template, locals);
   const messages: string[] = [];
   const result: Op[] = [];
   const session: OpSession = {context};
@@ -76,47 +73,3 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
   return result;
 }
 
-function createTemplateEntry(env: Environment, namespace: string): GeneratorEntry {
-  let generatorModule = ''
-  let pattern;
-  let generator = env.get(namespace);
-  if (!generator) {
-    const parts = namespace.split(':');
-    generatorModule = parts[0];
-    if (parts.length >= 2) {
-      pattern = parts.pop();
-      generator = env.get(parts.join(':'));
-    }
-  }
-  if (!generator) {
-    const installed = !!env.namespaces().find(n => n.startsWith(generatorModule));
-    const name = getTemplateName(namespace);
-    const hint = getTemplateHint(name);
-    if (installed) {
-      throw new ErrorWithInstruction(
-        `Generator '${hint}' doesn\'t have an template with namespace '${namespace}'.`,
-        AvailableTemplatesForGenerator(env, name, hint)
-      );
-    } else {
-      throw new ErrorWithInstruction(
-        `You don't seem to have a generator with the name '${hint}' installed.`, GeneratorNotFound(env, name, hint)
-      );
-    }
-  }
-
-  const dir = path.dirname(generator.resolved);
-  const specs = loadTemplateSpecs(generator.resolved);
-  return {generator, specs, dir, pattern};
-}
-
-function getTemplateName(namespace: string) {
-  return namespace.split(':')[0];
-}
-
-function getTemplateHint(namespace) {
-  if (isScoped(namespace)) {
-    const splitName = namespace.split('/');
-    return `${splitName[0]}/gen-${splitName[1]}`;
-  }
-  return `gen-${namespace}`;
-}

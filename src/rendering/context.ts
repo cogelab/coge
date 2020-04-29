@@ -5,7 +5,7 @@ import {Context} from "../types";
 import {undasherize} from "../utils";
 
 // supports kebab-case to KebabCase
-//@ts-ignore
+// @ts-ignore
 inflection.undasherize = undasherize;
 
 const helpers = {

@@ -7,7 +7,7 @@ import {FileLoader} from "./loders";
 import toArray from "@tiopkg/utils/array/toArray";
 
 export interface DefaultContextOptions extends EnvironmentOptions {
-  loglevel?: LogLevel;
+  debug?: boolean;
   cwd?: string;
   lookup?: Partial<LookupOptions> | boolean;
   prompt?: PromptModule;
@@ -24,7 +24,7 @@ const resolver = new FileResolver('.coge.js', FileLoader);
 export class DefaultContext implements Context {
   cwd: string;
   env: Environment;
-  loglevel: LogLevel;
+  debug?: boolean;
 
   static async create();
   static async create(env: Environment);
@@ -48,7 +48,7 @@ export class DefaultContext implements Context {
     const {prompt} = opts;
     this.env = env || Environment.createEnv({prompt});
 
-    this.loglevel = opts.loglevel || 'info';
+    this.debug = opts.debug;
 
     Object.assign(this.logger.colors, LogColors());
 

@@ -59,7 +59,7 @@ const metaverse = (folder, cmds, promptResponse) => it(folder, async () => {
     console.log(res)
   }
   expect(res.same).toEqual(true)
-})
+}, 60000)
 
 describe.only('metaverse', () => {
   beforeAll(() => {

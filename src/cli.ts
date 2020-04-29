@@ -12,7 +12,7 @@ const pkg = require("../package.json");
 interface PerformOptions {
   args: { [k: string]: any };
   opts: { [k: string]: any };
-  loglevel: LogLevel;
+  debug?: boolean;
   settings?: RunnerSettings;
 }
 
@@ -33,7 +33,8 @@ function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: Run
     cmd.alias(def.alias);
   }
   cmd.action((args, opts, logger) => {
-    return perform(def.action, {settings, args, opts, loglevel: logger.transports?.caporal?.level || 'info'})
+    const debug = opts.v || opts.verbose;
+    return perform(def.action, {settings, args, opts, debug})
   });
 
   if (def.help) {
@@ -65,13 +66,13 @@ function registerCommand(program: Caporal, def: CliCmdDefinition, settings?: Run
 
 async function perform(
   action: CliCmdActionCallback,
-  {args, opts, loglevel, settings}: PerformOptions,
+  {args, opts, debug, settings}: PerformOptions,
 ) {
   settings = settings || {};
   return action(await DefaultContext.create({
     ...settings,
-    loglevel,
-    lookup: {localOnly: !opts.global}
+    debug,
+    lookup: {}
   }), args, opts);
 }
 

@@ -1,55 +1,29 @@
-import path = require('path');
-import fs = require('fs-extra');
-import {Prompter, GeneratorEntry} from './types'
-
-interface Interaction {
-  params?: (opts: {context: Record<string, any>})=> Promise<any>;
-  prompt?: (opts: {prompter: Prompter<any, any>, context: Record<string, any>}) => Promise<any>;
-}
-
-const InteractionFiles = ['prompt.js', 'index.js'];
+import {Prompter} from './types'
+import {Template} from "./templates";
 
 export async function prompt<Q, T>(
   prompter: Prompter<any, any>,
-  template: GeneratorEntry,
+  template: Template,
   context?: Record<string, any>,
 ): Promise<T | object> {
 
-  let {params} = template.specs;
-  if (!params) {
-    const file = InteractionFiles
-      .map(f => path.resolve(path.join(template.dir, f)))
-      .find(f => fs.existsSync(f));
-
-    params = file && await require(file);
-
-    if (!params) {
-      return Promise.resolve({})
-    }
-  }
+  const questions = template._info.specs.params || template.questions;
 
   context = context || {};
-  if (Array.isArray(params)) {
+  if (Array.isArray(questions)) {
     // prompt _only_ for things we've not seen on the CLI
-    params = params.filter(p =>
+    return prompter.prompt(questions.filter(p =>
       context![p.name] == null ||
       context![p.name].length === 0,
-    );
-    return prompter.prompt(params);
+    ));
   }
 
-  const interaction = <Interaction>params;
-
-  // short circuit without prompter
-  // $FlowFixMe
-  if (interaction.params) {
-    return interaction.params({context});
+  if (template.prompt) {
+    return template.prompt({prompter, context});
   }
 
-  // lazy loads prompter
-  // everything below requires it
-  if (interaction.prompt) {
-    return interaction.prompt({prompter, context});
+  if (template.params) {
+    return template.params({prompter, context});
   }
 
   return {};

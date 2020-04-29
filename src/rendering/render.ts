@@ -4,9 +4,10 @@ import fm = require('front-matter');
 import path = require('path');
 import walk = require('ignore-walk');
 
-import {Context, RenderedAction, GeneratorEntry} from '../types'
+import {Context, RenderedAction} from '../types'
 import {buildContext} from './context';
 import last from "@tiopkg/utils/array/last";
+import {Template} from "../templates";
 
 const ignores = [
   'coge.toml',
@@ -38,13 +39,14 @@ async function listFiles(dir: string) {
 
 export const render = async (
   context: Context,
-  template: Pick<GeneratorEntry, 'dir' | 'pattern'>,
+  template: Template,
   locals?: Record<string, any>,
 ): Promise<RenderedAction[]> => {
-  const files = (await listFiles(template.dir))
+  const info = template._info;
+  const files = (await listFiles(info.dir))
     .sort((a, b) => a.localeCompare(b))  // TODO: add a test to verify this sort
     .filter(file => !ignores.find(ig => file.endsWith(ig)))
-    .filter(file => (template.pattern ? file.match(template.pattern) : true));
+    .filter(file => (info.pattern ? file.match(info.pattern) : true));
 
   const entries = await Promise.all(files.map(file => fs.readFile(file).then(text => ({file, text: text.toString()}))));
   return entries
