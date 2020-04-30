@@ -1,7 +1,7 @@
 const path = require('path');
 const mm = require("micromatch");
 
-exports.questions = [{
+exports.questions = () => [{
   type: 'input',
   name: 'license',
   message: 'Which license?'
