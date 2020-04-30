@@ -9,7 +9,7 @@ export async function prompt<Q, T>(
   context = context || {};
 
   const questions = template._info.specs.params
-    || await template.questions({prompter, context});
+    || (template.questions && await template.questions({prompter, context}));
 
   if (Array.isArray(questions)) {
     // prompt _only_ for things we've not seen on the CLI
