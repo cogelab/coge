@@ -5,7 +5,7 @@ import {Environment, Meta} from "coge-environment";
 import {loadTemplateSpecs, TemplateSpecs} from "./specs";
 import {ErrorWithInstruction} from "../errors";
 import {AvailableTemplatesForGenerator, GeneratorNotFound} from "../instructions";
-import {Prompter} from "../types";
+import {Templating} from "coge-generator";
 
 export interface TemplateInfo {
   dir: string;
@@ -14,28 +14,11 @@ export interface TemplateInfo {
   pattern?: string;
 }
 
-interface TemplatePromptOptions {
-  prompter: Prompter<any, any>;
-  context: Record<string, any>;
-}
-
-interface TemplateCtorOptions extends TemplateInfo {
-}
-
-interface TemplateCtor {
-  new(opts: TemplateCtorOptions);
-}
-
-export interface Template {
+export interface Template extends Templating {
   _info: TemplateInfo;
-  questions?: Record<string, any>[];
-  params?: (opts: TemplatePromptOptions) => Promise<any>;
-  prompt?: (opts: TemplatePromptOptions) => Promise<any>;
-  locals?: (locals: Record<string, any>) => Promise<Record<string, any> | undefined>;
-  filter?: (files: string[], locals: Record<string, any>) => Promise<string[]>
 }
 
-export function loadTemplate(env: Environment, namespace: string): Template {
+export function loadTemplate(env: Environment, namespace: string, opts): Template {
 
   let generator = ''
   let pattern: string | undefined = undefined;
@@ -56,7 +39,7 @@ export function loadTemplate(env: Environment, namespace: string): Template {
   const specs = loadTemplateSpecs(meta.resolved);
 
   const info = {meta, specs, dir, pattern};
-  const template = create(dir, {...info});
+  const template = create(dir, {env, ...info, ...opts});
   template._info = info;
   return template;
 }
@@ -70,16 +53,16 @@ function create(cwd, opts): Template {
 
   if (file) {
     try {
-      const module = require(file);
-      if (typeof module === 'function') {
-        return new module(opts);
+      const Module = require(file);
+      if (typeof Module === 'function') {
+        return new Module(opts);
       }
-      if (Array.isArray(module)) {
-        return <Template>{questions: module};
+      if (Array.isArray(Module)) {
+        return <Template>{questions: async _ => Module};
       }
-      return <Template>module;
+      return <Template>Module;
     } catch (e) {
-      // no-op
+      console.warn(e);
     }
   }
   return <Template>{}

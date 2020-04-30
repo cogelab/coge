@@ -1,4 +1,4 @@
-import {Template, TemplateInfo} from "../../templates";
+import {Template, TemplateInfo} from "../../template";
 
 export function mockTemplate(info: Partial<TemplateInfo>, template?: Partial<Template>): Template {
   template = template || {};

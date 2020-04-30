@@ -77,7 +77,13 @@ export interface OpSession {
   overwrite?: boolean;
 }
 
-export type OpResult = any
+export interface OpResult extends Record<string, any> {
+  type: string;
+  subject: string;
+  status: string;
+  timing: number;
+}
+
 export type Op = (session: OpSession, action: RenderedAction, opts: GenerateOptions) => Promise<OpResult>
 
 

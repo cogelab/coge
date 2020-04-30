@@ -28,11 +28,14 @@ export const gen: CliCmdDefinition = {
     description: 'Simplified definition of `name` attribute',
   }, {
     flags: '--group <group>',
-    description: 'Simplified definition of `group` attribute ',
+    description: 'Simplified definition of `group` attribute',
   }, {
     flags: '-D --data <var>=<value>',
     description: 'Set data <var> to <value>',
     type: 'repeatable',
+  }, {
+    flags: '--skip-install',
+    description: 'Skip install for the generators that support npm/yarn installation after code generating',
   }]
 }
 

@@ -4,16 +4,17 @@ import {render} from "./rendering";
 import {resolveOps} from "./ops";
 import {ErrorWithInstruction} from "./errors";
 import {assign} from "./utils";
-import {Context, Op, OpSession} from "./types";
+import {Context, Op, OpResult, OpSession} from "./types";
 
 import {prompt} from "./prompt";
-import {loadTemplate} from "./templates";
+import {loadTemplate} from "./template";
 
 export interface GenerateOptions {
   global?: boolean;
   force?: boolean;
   dry?: boolean;
   attrs?: Record<string, any>;
+  skipInstall?: boolean;
 }
 
 export async function generate(context: Context, generator: string, opts: GenerateOptions) {
@@ -45,7 +46,15 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
     throw new Error('Please specify a generator.');
   }
 
-  const template = loadTemplate(env, generator);
+  const template = loadTemplate(env, generator, opts);
+
+  if (template.init) {
+    const initialized = await template.init();
+    if (!initialized && initialized != null) {
+      return [];
+    }
+  }
+
   const attrs = assign({cwd}, opts.attrs);
 
   // 1. prompt locals
@@ -59,8 +68,9 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
 
   // 3. render templates
   const renderedActions = await render(context, template, locals);
+
   const messages: string[] = [];
-  const result: Op[] = [];
+  const results: OpResult[] = [];
   const session: OpSession = {context};
 
   // 4. perform operations
@@ -71,13 +81,22 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
     }
     const ops = resolveOps(action.attributes)
     for (const op of ops) {
-      result.push(await op(session, action, opts))
+      results.push(await op(session, action, opts))
     }
   }
   if (messages.length > 0) {
     logger.colorful(`${generator}:\n${messages.join('\n')}`);
   }
 
-  return result;
+  if (template.install) {
+    // @ts-ignore
+    await template.install(opts);
+  }
+
+  if (template.end) {
+    await template.end();
+  }
+
+  return results;
 }
 

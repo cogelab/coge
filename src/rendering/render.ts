@@ -7,7 +7,7 @@ import walk = require('ignore-walk');
 import {Context, RenderedAction} from '../types'
 import {buildContext} from './context';
 import last from "@tiopkg/utils/array/last";
-import {Template} from "../templates";
+import {Template} from "../template";
 
 const ignores = [
   'template.toml',
@@ -40,7 +40,7 @@ export const render = async (
   }
 
   if (template.filter) {
-    files = template.filter(files, locals);
+    files = await template.filter(files, locals);
   }
 
   // read templates
