@@ -1,10 +1,9 @@
-import chalk from 'chalk';
-
+import chalk = require('chalk');
 import {render} from "./rendering";
 import {resolveOps} from "./ops";
 import {ErrorWithInstruction} from "./errors";
 import {assign} from "./utils";
-import {Context, Op, OpResult, OpSession} from "./types";
+import {Context, OpResult, OpSession} from "./types";
 
 import {prompt} from "./prompt";
 import {loadTemplate} from "./template";

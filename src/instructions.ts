@@ -1,5 +1,5 @@
+import chalk = require("chalk");
 import {Environment} from "coge-environment";
-import chalk from "chalk";
 import {availableGenerators} from "./help";
 
 export const NoGenerators = () => `No generators found.

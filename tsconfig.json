@@ -12,8 +12,8 @@
     "outDir": "lib",
     "preserveConstEnums": true,
     "removeComments": true,
-    "lib": ["esnext"],
-    "target": "es6"
+    "lib": ["es2020"],
+    "target": "es2018"
   },
   "include": ["index.ts", "src"],
   "exclude": ["node_modules", "src/__tests__"]

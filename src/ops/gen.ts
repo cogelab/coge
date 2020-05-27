@@ -6,7 +6,7 @@ import {GenerateOptions} from "../generate";
 import {OpResult, RenderedAction, OpSession, Prompter} from '../types'
 import {createResult} from '../utils'
 
-const {red} = require('chalk');
+import {red} from 'chalk';
 
 export async function gen(
   session: OpSession,

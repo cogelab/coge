@@ -1,13 +1,14 @@
 import fs = require('fs-extra');
 import ejs = require('ejs');
-import fm = require('front-matter');
 import path = require('path');
 import walk = require('ignore-walk');
-
 import {Context, RenderedAction} from '../types'
+
 import {buildContext} from './context';
 import last from "@tiopkg/utils/array/last";
 import {Template} from "../template";
+
+const fm = require('front-matter');
 
 const ignores = [
   'template.toml',
@@ -48,7 +49,7 @@ export const render = async (
 
   // parse and render templates
   return entries
-    .map(({file, text}) => ({file, ...fm<Record<string, any>>(text)}))
+    .map(({file, text}: {file: string, text: string}) => ({file, ...fm(text, {allowUnsafe: true})}))
     .map(({file, attributes, body}) => {
       const extra = extractFilePath(info.dir, file);
       return {

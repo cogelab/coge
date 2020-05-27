@@ -66,7 +66,7 @@ describe.only('metaverse', () => {
     fs.removeSync(dir('coge-extension/given'));
     fs.removeSync(dir('coge-generators/given'));
   })
-  metaverse('coge-extension', [['coge-js:new']], {overwrite: true})
+  // metaverse('coge-extension', [['coge-js:new']], {overwrite: true})
   metaverse(
     'coge-generators',
     [

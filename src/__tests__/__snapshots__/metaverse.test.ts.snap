@@ -1,20 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`metaverse coge-extension: coge-js:new 1`] = `
-Object {
-  "actions": Array [
-    Object {
-      "status": "generated",
-      "subject": "given/coge-js/new.md",
-      "timing": -1,
-      "type": "add",
-    },
-  ],
-  "success": true,
-  "time": 0,
-}
-`;
-
 exports[`metaverse coge-generators: add-unless-exists:new -D message=foo 1`] = `
 Object {
   "actions": Array [
