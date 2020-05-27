@@ -28,6 +28,7 @@ const localsToCapitalize = ['name'];
 const localsDefaults = {
   name: 'unnamed',
   group: '',
+  to: ''
 };
 
 const capitalizedLocals = (locals: any) => Object.entries(locals).reduce(doCapitalization, {});
