@@ -48,5 +48,6 @@ Object {
     },
   },
   "name": "foobar",
+  "to": "",
 }
 `;
