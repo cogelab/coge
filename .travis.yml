@@ -10,18 +10,6 @@ env:
 script: npm test
 jobs:
   include:
-  - stage: npm
-    node_js: '12'
-    if: tag =~ ^v\d.*
-    deploy:
-      provider: npm
-      script: npm run build
-      email: towyuan@outlook.com
-      api_key:
-        secure: ersYlY11cjkX8AH1f5F144bnan6pLJjpXcGlvQI/lLF8ixT6TxE7F/CjZOdLXvjidHdDH3hGWK13xK6zJ/GJy4n7mIxMd2HBr49hmuNsXEvhfmpHuHFKjDm4eWKEbGDJoaDe2HznHGAwmc0MLzOTaTao0NtKA1bM0VHABe0w3xfvcgF7TkqbRFBSKMwHEVXSsV61I3QLOx17RSQk/tj71fL+O8xxiL9KwiWAbRQb8RJRTvoLxrdCkvZ3OqX2kFcbH2aDrIm8/c6VcCM1NycWfnBtqhWwf8YtLesx0QnoKjDBxcW4wyw0EE0NXY1dIyLOL97WuV8dpX82dUvLeaguNfY1FHMI7rLqaj77wecInzyCAWNlewzIdQ5E3PHV9HfGQGeo8rIX/gNfb5nva1KQ1vgHHLu4qtbPWZl9J++KDwnvKqBf1DhXP9mnBqmaunW6Gwpds+EbhBtCInMCsyhnBIn1AKwv8fbEMq2275iWxNCtvSv5j0CdbR18JLtiPjZ+1YXZgGhSWQRi0NcxLx7Hqf4g9FZrpiqJ91091Mk4bGKrLr4RohHyNZTMSBDSRFLEEnJ3noOrQ/opr1XmOjrWIcSyqUoevKQiBgvZTtyqfEGbxRSujPYiz6wbsy++FwH0eqcs91qZI5udbpvMZCi00HQsik4eMwprNWvG5LVFqyQ=
-      on:
-        tags: true
-        skip_cleanup: true
   - stage: binary releases
     script: npm run standalone
     if: tag =~ ^v\d.*
