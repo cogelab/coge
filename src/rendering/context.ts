@@ -28,7 +28,10 @@ const localsToCapitalize = ['name'];
 const localsDefaults = {
   name: 'unnamed',
   group: '',
-  dwd: '', // dest directory relative to cwd
+  folder: '.',  // the folder of the template file
+  dir: '.',     // the relative directory to template root
+  trd: '.',     // the relative directory to template root
+  drd: '.',     // the relative directory to cwd
 };
 
 const capitalizedLocals = (locals: any) => Object.entries(locals).reduce(doCapitalization, {});

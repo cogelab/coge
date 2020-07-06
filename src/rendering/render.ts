@@ -70,9 +70,9 @@ async function listFiles(dir: string) {
 }
 
 function extractFilePath(root: string, file: string) {
-  const dir = path.relative(root, path.dirname(file));
-  const folder = last(dir.split(path.sep));
-  return {dir, folder};
+  const trd = path.relative(root, path.dirname(file)) || '.';
+  const folder = last(trd.split(path.sep));
+  return {trd, folder, dir: trd};
 }
 
 function renderTemplate(tmpl: any, locals?: Record<string, any>, context?: Context, extra?: Record<string, any>) {
