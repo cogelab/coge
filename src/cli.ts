@@ -1,7 +1,7 @@
 // @ts-ignore
 import {Caporal} from 'caporal';
 import * as Program from "caporal/lib/program";
-import values from "@tiopkg/utils/object/values";
+import values from "@tib/utils/object/values";
 
 import * as commands from "./cmds";
 import {CliCmdActionCallback, CliCmdDefinition, LogLevel, RunnerSettings} from "./types";

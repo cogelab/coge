@@ -4,7 +4,7 @@ import {Environment, EnvironmentOptions, LookupOptions, PromptModule} from "coge
 import {Context, LogLevel, Prompter} from "./types";
 import {FileResolver} from "./resolvers/file";
 import {FileLoader} from "./loders";
-import toArray from "@tiopkg/utils/array/toArray";
+import toArray from "@tib/utils/array/toArray";
 
 export interface DefaultContextOptions extends EnvironmentOptions {
   debug?: boolean;
