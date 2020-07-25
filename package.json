@@ -57,7 +57,7 @@
     "caporal": "^1.4.0",
     "chalk": "^4.1.0",
     "change-case": "^4.1.1",
-    "coge-environment": "^0.5.3",
+    "coge-environment": "^0.6.0",
     "coge-generator": "^0.2.2",
     "cross-spawn": "^7.0.3",
     "debug": "^4.1.1",
