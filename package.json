@@ -1,6 +1,6 @@
 {
   "name": "coge",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "description": "An efficient code generator.",
   "license": "MIT",
   "repository": "https://github.com/cogelab/coge",
