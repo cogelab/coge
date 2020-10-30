@@ -9,7 +9,7 @@ export async function shell(
   {attributes: {sh}, body}: RenderedAction,
   opts: GenerateOptions,
 ): Promise<OpResult> {
-  const {logger} = env.adapter;
+  const {logger} = env.adapter!;
   const result = createResult('shell', sh)
   if (notEmpty(sh)) {
     if (!opts.dry) {

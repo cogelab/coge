@@ -10,9 +10,9 @@ export const list: CliCmdDefinition = {
 
 async function action(context: Context) {
   const {env} = context;
-  const {adapter: {logger}} = env;
+  const {adapter} = env;
 
-  logger.log('Available Templates:\n')
-  logger.log(availableGenerators(env))
+  adapter?.logger.log('Available Templates:\n')
+  adapter?.logger.log(availableGenerators(env))
 }
 

@@ -14,7 +14,7 @@ export async function inject(
   const {
     attributes: {to, inject},
   } = action;
-  const {logger} = env.adapter;
+  const {logger} = env.adapter!;
 
   const result = createResult('inject', to)
 

@@ -4,7 +4,7 @@ import {Environment, EnvironmentOptions, LookupOptions, PromptModule} from "coge
 import {Context, LogLevel, Prompter} from "./types";
 import {FileResolver} from "./resolvers/file";
 import {FileLoader} from "./loders";
-import toArray from "@tib/utils/array/toArray";
+import toArray from "@loopx/utils/array/toArray";
 
 export interface DefaultContextOptions extends EnvironmentOptions {
   debug?: boolean;
@@ -68,11 +68,11 @@ export class DefaultContext implements Context {
   }
 
   get logger() {
-    return this.env.adapter.logger;
+    return this.env.adapter!.logger;
   }
 
   get prompter(): Prompter<any, any> {
-    return this.env.adapter;
+    return this.env.adapter!;
   }
 
   exec(action: string, body: string | Buffer) {

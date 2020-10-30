@@ -17,7 +17,7 @@ export interface GenerateOptions {
 }
 
 export async function generate(context: Context, generator: string, opts: GenerateOptions) {
-  const {logger} = context.env.adapter;
+  const {logger} = context.env.adapter!;
   try {
     const actions = await doGenerate(context, generator, opts);
     return {success: true, actions, time: 0}
@@ -38,7 +38,7 @@ export async function generate(context: Context, generator: string, opts: Genera
 
 async function doGenerate(context: Context, generator: string, opts: GenerateOptions) {
   const {cwd, env} = context;
-  const {logger} = env.adapter;
+  const {logger} = env.adapter!;
 
   opts.dry && logger.log('(dry mode)');
   if (!generator) {
@@ -57,7 +57,7 @@ async function doGenerate(context: Context, generator: string, opts: GenerateOpt
   const attrs = assign({cwd}, opts.attrs);
 
   // 1. prompt locals
-  const answers = await prompt(env.adapter, template, attrs);
+  const answers = await prompt(env.adapter!, template, attrs);
   let locals = Object.assign({}, answers, attrs, {cwd});
 
   // 2. hook locals

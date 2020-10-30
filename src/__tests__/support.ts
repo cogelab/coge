@@ -1,5 +1,5 @@
 import * as path from "path";
-import filter from "@tib/utils/object/filter";
+import filter from "@loopx/utils/object/filter";
 
 export const fixture = dir => path.join(__dirname, 'fixtures/templates', dir);
 

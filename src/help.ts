@@ -2,7 +2,7 @@ import {Environment} from "coge-environment";
 import {NoGenerators} from "./instructions";
 
 export function printAvailableGenerators(env: Environment) {
-  const {adapter: {logger}} = env;
+  const {logger} = env.adapter!;
   if (env.namespaces().length) {
     logger.log('Available Generators:\n');
     logger.log(availableGenerators(env));

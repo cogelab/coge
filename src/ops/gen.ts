@@ -17,7 +17,7 @@ export async function gen(
   const {
     attributes: {to, inject, unless_exists},
   } = action;
-  const {logger} = env.adapter;
+  const {logger} = env.adapter!;
   const prompter = env.adapter;
   const result = createResult('add', to);
   if (!to || inject) {
@@ -62,7 +62,7 @@ async function resolveConflict(env: Environment, prompter, to, oldBody, newBody)
   if (overwrite !== 'diff') {
     return overwrite;
   }
-  env.adapter.diff(oldBody, newBody);
+  env.adapter!.diff(oldBody, newBody);
   return resolveConflict(env, prompter, to, oldBody, newBody);
 }
 

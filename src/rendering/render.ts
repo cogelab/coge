@@ -5,7 +5,7 @@ import walk = require('ignore-walk');
 import {Context, RenderedAction} from '../types'
 
 import {buildContext} from './context';
-import last from "@tib/utils/array/last";
+import last from "@loopx/utils/array/last";
 import {Template} from "../template";
 
 const fm = require('front-matter');
