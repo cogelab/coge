@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - '12'
-- node
+- '14'
 
 env:
   global:
@@ -13,7 +13,7 @@ jobs:
   - stage: binary releases
     script: npm run standalone
     if: tag =~ ^v\d.*
-    node_js: '12'
+    node_js: '14'
     deploy:
       provider: releases
       api_key: "$GITHUB_TOKEN"
